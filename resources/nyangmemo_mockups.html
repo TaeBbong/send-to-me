@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>냥모 (NyangMemo) — UI/UX Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Pastel Cream palette */
+  --cream:#FBF4E6;
+  --cream-deep:#F3E8D2;
+  --paper:#FFFDF8;
+  --ink:#5A4A3A;
+  --ink-soft:#8C7B66;
+  --line:#E2D4BC;
+  --line-strong:#C9B79A;
+
+  --peach:#F4A988;
+  --peach-deep:#E8876B;
+  --mint:#9FD8BE;
+  --mint-deep:#6FBF9B;
+  --lav:#C7B5E8;
+  --lav-deep:#A98FD6;
+  --butter:#F6D67E;
+  --sky:#A6CCE8;
+  --rose:#F2A7B5;
+
+  --shadow: 4px 4px 0 rgba(90,74,58,.14);
+  --shadow-sm: 2px 2px 0 rgba(90,74,58,.14);
+  --radius:22px;
+  --radius-sm:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Gaegu','Jua',system-ui,sans-serif;
+  background:
+    radial-gradient(circle at 20% 10%, #FCEFD6 0, transparent 40%),
+    radial-gradient(circle at 90% 80%, #F6E7CF 0, transparent 45%),
+    var(--cream);
+  color:var(--ink);
+  line-height:1.5;
+  padding:0 0 80px;
+}
+.dotgrid{
+  background-image:radial-gradient(var(--line) 1.4px, transparent 1.4px);
+  background-size:18px 18px;
+}
+
+/* ---------- Page header ---------- */
+header.site{
+  text-align:center;padding:54px 20px 34px;
+}
+.kbadge{
+  display:inline-block;font-family:'Press Start 2P',monospace;font-size:10px;
+  background:var(--mint);color:#2f5b48;padding:7px 12px;border:2px solid var(--ink);
+  border-radius:9px;box-shadow:var(--shadow-sm);letter-spacing:.5px;
+}
+h1.app{font-family:'Jua',sans-serif;font-size:60px;color:var(--ink);margin:18px 0 4px;letter-spacing:1px}
+.app .en{color:var(--peach-deep)}
+.tagline{font-size:23px;color:var(--ink-soft);max-width:640px;margin:6px auto 0}
+.concept-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.chip{background:var(--paper);border:2px solid var(--line-strong);border-radius:20px;padding:6px 14px;font-size:18px;box-shadow:var(--shadow-sm)}
+
+/* ---------- Section ---------- */
+section{max-width:1180px;margin:0 auto;padding:38px 22px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.sec-num{font-family:'Press Start 2P',monospace;font-size:13px;background:var(--ink);color:var(--cream);width:38px;height:38px;display:grid;place-items:center;border-radius:10px}
+h2{font-family:'Jua',sans-serif;font-size:34px;color:var(--ink)}
+.sec-sub{font-size:20px;color:var(--ink-soft);margin:2px 0 26px 50px}
+
+/* ---------- Design tokens ---------- */
+.tok-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.tok-card{background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.tok-card h3{font-family:'Jua',sans-serif;font-size:21px;margin-bottom:12px}
+.swatches{display:flex;flex-wrap:wrap;gap:9px}
+.sw{width:62px;text-align:center;font-size:13px;color:var(--ink-soft)}
+.sw i{display:block;height:46px;border-radius:12px;border:2px solid var(--ink);margin-bottom:4px}
+.type-row{margin-bottom:12px;border-bottom:1.5px dashed var(--line-strong);padding-bottom:8px}
+.type-row small{font-size:13px;color:var(--ink-soft);font-family:'Gaegu'}
+.fnt-jua{font-family:'Jua'}.fnt-gae{font-family:'Gaegu'}.fnt-px{font-family:'Press Start 2P';font-size:13px}
+.spacing-demo{display:flex;align-items:flex-end;gap:8px}
+.spacing-demo i{background:var(--peach);border:2px solid var(--ink);border-radius:6px;width:26px}
+
+/* ---------- Phone frame ---------- */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:34px 26px;justify-items:center}
+.phone-wrap{width:300px}
+.phone-cap{text-align:center;margin-bottom:10px}
+.phone-cap b{font-family:'Jua';font-size:20px;display:block;color:var(--ink)}
+.phone-cap span{font-size:16px;color:var(--ink-soft)}
+.phone{
+  width:300px;height:640px;background:var(--ink);border-radius:42px;padding:11px;
+  box-shadow:8px 10px 0 rgba(90,74,58,.18);position:relative;
+}
+.phone::after{content:"";position:absolute;top:20px;left:50%;transform:translateX(-50%);width:96px;height:24px;background:var(--ink);border-radius:0 0 16px 16px;z-index:30}
+.screen{
+  width:100%;height:100%;background:var(--cream);border-radius:32px;overflow:hidden;position:relative;
+  display:flex;flex-direction:column;
+}
+.scr-pad{padding:18px 16px}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 4px;font-size:13px;color:var(--ink);font-family:'Jua'}
+.statusbar .dots{font-family:'Press Start 2P';font-size:7px;letter-spacing:1px}
+
+/* in-screen common */
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:4px 18px 12px}
+.appbar h4{font-family:'Jua';font-size:23px}
+.iconbtn{width:38px;height:38px;border-radius:12px;border:2px solid var(--ink);background:var(--paper);display:grid;place-items:center;font-size:18px;box-shadow:var(--shadow-sm)}
+.scroll{flex:1;overflow:hidden;padding:0 16px}
+
+/* cards */
+.cat-card{background:var(--paper);border:2.5px solid var(--ink);border-radius:18px;padding:13px 14px;margin-bottom:12px;box-shadow:var(--shadow-sm);position:relative}
+.cat-card .top{display:flex;align-items:center;gap:10px}
+.cat-emoji{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;border:2px solid var(--ink)}
+.cat-card .nm{font-family:'Jua';font-size:19px}
+.cat-card .ct{font-size:14px;color:var(--ink-soft)}
+.tag{font-family:'Press Start 2P';font-size:7px;padding:4px 7px;border-radius:7px;border:2px solid var(--ink);background:var(--butter)}
+
+.note-line{background:var(--paper);border:2px solid var(--line-strong);border-radius:13px;padding:10px 12px;margin-bottom:9px;font-size:16px}
+.note-line .meta{font-size:13px;color:var(--ink-soft);margin-top:3px}
+
+/* checklist genui */
+.check-item{display:flex;align-items:center;gap:10px;background:var(--paper);border:2px solid var(--ink);border-radius:13px;padding:10px 12px;margin-bottom:9px;font-size:16px;box-shadow:var(--shadow-sm)}
+.box{width:23px;height:23px;border:2.5px solid var(--ink);border-radius:7px;flex:none;display:grid;place-items:center;font-size:15px}
+.box.on{background:var(--mint)}
+.done{color:var(--ink-soft);text-decoration:line-through}
+
+/* reference genui */
+.ref-card{background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:11px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+.ref-card .rt{font-family:'Jua';font-size:16px;display:flex;gap:6px;align-items:center}
+.ref-card .sum{font-size:14px;color:var(--ink-soft);margin:5px 0}
+.ref-card .lk{font-size:12px;color:var(--lav-deep);font-family:'Gaegu'}
+.datehead{font-family:'Press Start 2P';font-size:8px;color:var(--ink-soft);margin:4px 0 9px}
+
+/* bottom nav */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 16px;background:var(--paper);border-top:2.5px solid var(--ink)}
+.bnav .n{font-size:11px;text-align:center;color:var(--ink-soft)}
+.bnav .n i{display:block;font-size:21px;margin-bottom:1px;font-style:normal}
+.bnav .n.act{color:var(--peach-deep);font-weight:700}
+.fab{position:absolute;bottom:74px;left:50%;transform:translateX(-50%);width:62px;height:62px;border-radius:20px;background:var(--peach);border:3px solid var(--ink);box-shadow:3px 4px 0 rgba(90,74,58,.25);display:grid;place-items:center;font-size:30px;color:#fff;z-index:20}
+
+/* capture sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--paper);border-radius:28px 28px 0 0;border:3px solid var(--ink);border-bottom:none;padding:16px 16px 20px;box-shadow:0 -6px 0 rgba(90,74,58,.08)}
+.sheet .grab{width:46px;height:5px;background:var(--line-strong);border-radius:5px;margin:0 auto 12px}
+.capture-input{background:var(--cream);border:2.5px dashed var(--line-strong);border-radius:16px;min-height:120px;padding:13px;font-size:17px;color:var(--ink)}
+.capture-input .ph{color:var(--ink-soft)}
+.cap-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.savebtn{background:var(--mint);border:2.5px solid var(--ink);border-radius:14px;padding:10px 22px;font-family:'Jua';font-size:18px;box-shadow:var(--shadow-sm)}
+
+/* classify state */
+.classify-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px}
+.thinkbubble{background:var(--paper);border:2.5px solid var(--ink);border-radius:18px;padding:10px 16px;font-size:17px;box-shadow:var(--shadow-sm)}
+.result-card{background:var(--paper);border:3px solid var(--ink);border-radius:20px;padding:16px;margin:0 16px;box-shadow:var(--shadow);text-align:center}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--lav);border:2px solid var(--ink);border-radius:20px;padding:6px 14px;font-family:'Jua';font-size:17px;margin-top:8px}
+
+/* onboarding */
+.ob-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:26px}
+.ob-mid h3{font-family:'Jua';font-size:25px}
+.ob-mid p{font-size:17px;color:var(--ink-soft)}
+.dots3{display:flex;gap:8px;justify-content:center;margin-top:6px}
+.dots3 i{width:9px;height:9px;border-radius:50%;background:var(--line-strong)}
+.dots3 i.on{background:var(--peach);width:22px;border-radius:6px}
+.bigbtn{background:var(--peach);border:3px solid var(--ink);border-radius:16px;padding:13px 0;width:100%;font-family:'Jua';font-size:20px;color:#fff;box-shadow:var(--shadow-sm)}
+
+/* settings */
+.set-row{display:flex;align-items:center;justify-content:space-between;background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:16px;box-shadow:var(--shadow-sm)}
+.set-row .lbl b{font-family:'Jua';font-size:17px;display:block}
+.set-row .lbl small{font-size:13px;color:var(--ink-soft)}
+.toggle{width:48px;height:27px;background:var(--mint);border:2px solid var(--ink);border-radius:20px;position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:2px;right:2px;width:19px;height:19px;background:#fff;border:2px solid var(--ink);border-radius:50%}
+.toggle.off{background:var(--line)}
+.toggle.off::after{right:auto;left:2px}
+
+/* empty */
+.empty-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:30px}
+.empty-mid p{font-size:18px;color:var(--ink-soft)}
+
+/* interactive demo */
+.demo-stage{display:flex;flex-direction:column;align-items:center;gap:14px}
+.demo-hint{font-size:18px;color:var(--ink-soft);background:var(--paper);border:2px solid var(--line-strong);border-radius:14px;padding:8px 16px;box-shadow:var(--shadow-sm)}
+.demo-hint b{color:var(--peach-deep)}
+.tappable{cursor:pointer;transition:transform .08s}
+.tappable:active{transform:scale(.96)}
+
+/* flow diagram */
+.flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-top:10px}
+.flow .step{background:var(--paper);border:2.5px solid var(--ink);border-radius:16px;padding:12px 16px;font-size:17px;box-shadow:var(--shadow-sm);max-width:200px;text-align:center}
+.flow .step b{font-family:'Jua';display:block;font-size:18px}
+.flow .arr{font-size:24px;color:var(--peach-deep)}
+
+footer{text-align:center;color:var(--ink-soft);font-size:16px;padding:30px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px;font-size:15px;color:var(--ink-soft)}
+</style>
+</head>
+<body class="dotgrid">
+
+<header class="site">
+  <span class="kbadge">MEOW &nbsp;OS</span>
+  <h1 class="app">냥모 <span class="en">NyangMemo</span></h1>
+  <p class="tagline">생각나면 톡 던지고, 정리는 모모(고양이)와 LLM에게 맡기는 자동 분류 메모 앱</p>
+  <div class="concept-chips">
+    <span class="chip">🐾 도트 고양이 마스코트</span>
+    <span class="chip">🍼 파스텔 크림</span>
+    <span class="chip">✏️ 손그림 보더</span>
+    <span class="chip">🤖 LLM 자동 분류</span>
+    <span class="chip">🧩 카테고리별 GenUI</span>
+  </div>
+</header>
+
+<!-- ============ 0. 핵심 플로우 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">00</span><h2>핵심 사용자 플로우</h2></div>
+  <p class="sec-sub">세 가지 핵심 기능이 하나의 흐름으로 이어집니다</p>
+  <div class="flow">
+    <div class="step"><b>① 단축 동작</b>기기 버튼 두 번 → 입력창 즉시 토글</div>
+    <span class="arr">→</span>
+    <div class="step"><b>② 내용만 입력</b>카테고리 고민 없이 저장</div>
+    <span class="arr">→</span>
+    <div class="step"><b>LLM 자동 분류</b>기존 분류 매핑 또는 새 카테고리 생성</div>
+    <span class="arr">→</span>
+    <div class="step"><b>③ GenUI</b>카테고리 성격에 맞는 화면 자동 생성</div>
+  </div>
+</section>
+
+<!-- ============ 1. 인터랙티브 데모 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>인터랙티브 데모</h2></div>
+  <p class="sec-sub">아래 폰 화면을 직접 눌러보세요 — 캡처부터 자동 분류까지</p>
+  <div class="demo-stage">
+    <div class="demo-hint" id="demoHint">👆 아래 <b>＋ 버튼</b>(또는 화면)을 눌러 메모를 작성해보세요</div>
+    <div class="phone">
+      <div class="screen" id="demoScreen"><!-- JS renders --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. 디자인 시스템 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>디자인 시스템</h2></div>
+  <p class="sec-sub">Pastel Cream · 도트 + 손그림 · 따뜻하고 귀여운 톤</p>
+  <div class="tok-grid">
+    <div class="tok-card" style="grid-column:span 2">
+      <h3>🎨 컬러 팔레트</h3>
+      <div class="swatches">
+        <div class="sw"><i style="background:#FBF4E6"></i>cream</div>
+        <div class="sw"><i style="background:#FFFDF8"></i>paper</div>
+        <div class="sw"><i style="background:#5A4A3A"></i>ink</div>
+        <div class="sw"><i style="background:#F4A988"></i>peach</div>
+        <div class="sw"><i style="background:#9FD8BE"></i>mint</div>
+        <div class="sw"><i style="background:#C7B5E8"></i>lavender</div>
+        <div class="sw"><i style="background:#F6D67E"></i>butter</div>
+        <div class="sw"><i style="background:#A6CCE8"></i>sky</div>
+        <div class="sw"><i style="background:#F2A7B5"></i>rose</div>
+        <div class="sw"><i style="background:#E2D4BC"></i>line</div>
+      </div>
+      <p style="font-size:15px;color:var(--ink-soft);margin-top:10px">텍스트는 순수 블랙 대신 따뜻한 브라운 <b>ink(#5A4A3A)</b>. 카테고리마다 파스텔 포인트 컬러 1개를 자동 배정합니다.</p>
+    </div>
+    <div class="tok-card">
+      <h3>🔤 타이포그래피</h3>
+      <div class="type-row"><span class="fnt-jua" style="font-size:24px">Jua · 헤더/타이틀</span><br><small>둥근 제목용 · 22~60px</small></div>
+      <div class="type-row"><span class="fnt-gae" style="font-size:22px">Gaegu · 본문/손글씨</span><br><small>본문·메모 텍스트 · 15~20px</small></div>
+      <div class="type-row"><span class="fnt-px">PIXEL · 강조 라벨</span><br><small>Press Start 2P · 태그/뱃지 · 7~13px</small></div>
+    </div>
+    <div class="tok-card">
+      <h3>📐 모서리 · 그림자 · 간격</h3>
+      <p style="font-size:15px;color:var(--ink-soft)">Radius 14 / 18 / 22px · 손그림 느낌의 두꺼운 보더(2~3px ink)</p>
+      <div style="display:flex;gap:8px;margin:10px 0">
+        <div style="width:44px;height:34px;background:var(--paper);border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--shadow-sm)"></div>
+        <div style="width:44px;height:34px;background:var(--paper);border:2.5px solid var(--ink);border-radius:18px;box-shadow:var(--shadow)"></div>
+      </div>
+      <small style="color:var(--ink-soft)">Spacing 4·8·12·16·24px 8pt 그리드</small>
+      <div class="spacing-demo" style="margin-top:8px">
+        <i style="height:8px"></i><i style="height:14px"></i><i style="height:22px"></i><i style="height:30px"></i>
+      </div>
+    </div>
+    <div class="tok-card">
+      <h3>🐾 마스코트 “모모”</h3>
+      <p style="font-size:15px;color:var(--ink-soft);margin-bottom:10px">도트(픽셀) 고양이. 상황별 표정으로 반응합니다.</p>
+      <div style="display:flex;gap:16px;justify-content:space-around;align-items:flex-end" id="mascotRow"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. 화면 갤러리 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>전체 화면 목업</h2></div>
+  <p class="sec-sub">온보딩부터 카테고리별 GenUI까지 — 11개 핵심 화면</p>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<footer>
+  냥모(NyangMemo) Design System v1.0 · Pastel Cream + Dot Cat · 모든 화면은 320×690 모바일 기준
+  <div class="legend">
+    <span>🟧 peach = 주요 액션</span><span>🟩 mint = 완료/저장</span><span>🟪 lavender = 분류·AI</span><span>🟨 butter = 태그</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- Pixel cat mascot (SVG) ---------- */
+function cat(mood, size){
+  size = size||72;
+  // base body color by mood
+  var cMap={happy:'#F4C9A8',sleep:'#C7B5E8',think:'#9FD8BE',wave:'#F6D67E',love:'#F2A7B5'};
+  var b = cMap[mood]||'#F4C9A8';
+  var dark='#5A4A3A';
+  // pixel grid 16x16 -> draw via blocks
+  function r(x,y,w,h,f){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+f+'" rx="0.5"/>';}
+  var s='<svg width="'+size+'" height="'+size+'" viewBox="0 0 16 16" shape-rendering="crispEdges" style="image-rendering:pixelated">';
+  // ears
+  s+=r(3,2,2,2,dark)+r(11,2,2,2,dark);
+  s+=r(3,3,2,1,b)+r(11,3,2,1,b);
+  // head outline
+  s+=r(3,4,10,1,dark)+r(2,5,1,6,dark)+r(13,5,1,6,dark)+r(3,11,10,1,dark);
+  // face fill
+  s+=r(3,5,10,6,b);
+  // cheeks
+  s+=r(4,8,2,1,'#F2A7B5')+r(10,8,2,1,'#F2A7B5');
+  // eyes / mouth by mood
+  if(mood==='sleep'){ s+=r(5,7,2,1,dark)+r(9,7,2,1,dark); }
+  else if(mood==='happy'){ s+=r(5,6,1,2,dark)+r(10,6,1,2,dark)+r(7,8,2,1,dark); }
+  else if(mood==='think'){ s+=r(5,6,1,2,dark)+r(10,6,1,2,dark)+r(9,9,1,1,dark); s+=r(13,4,1,1,'#fff');}
+  else if(mood==='wave'){ s+=r(5,6,1,2,dark)+r(10,6,1,2,dark)+r(7,8,2,1,dark); s+=r(1,6,1,2,b)+r(0,5,1,1,b);}
+  else if(mood==='love'){ s+=r(5,6,1,1,'#E8876B')+r(6,7,1,1,'#E8876B')+r(10,6,1,1,'#E8876B')+r(9,7,1,1,'#E8876B')+r(7,8,2,1,dark);}
+  // body
+  s+=r(4,12,8,1,dark)+r(4,12,8,2,b)+r(4,14,8,1,dark);
+  // tail
+  s+=r(12,12,2,1,b)+r(13,11,1,2,b);
+  s+='</svg>';
+  return s;
+}
+
+/* ---------- Reusable bits ---------- */
+function statusbar(){return '<div class="statusbar"><span>9:41</span><span class="dots">●●● ▮▮ ⌁</span></div>';}
+function bnav(active){
+  var items=[['🏠','홈','home'],['🔍','탐색','search'],['＋','',''],['🐾','모모',''],['⚙️','설정','set']];
+  var h='<div class="bnav">';
+  items.forEach(function(it,i){
+    if(i===2){h+='<div class="n" style="width:42px"></div>';return;}
+    var cls=(it[2]===active)?'n act':'n';
+    h+='<div class="'+cls+'"><i>'+it[0]+'</i>'+it[1]+'</div>';
+  });
+  h+='</div>';return h;
+}
+
+/* ---------- Screen renderers (return innerHTML of .screen) ---------- */
+var S={};
+
+S.home=function(){return statusbar()+
+  '<div class="appbar"><h4>오늘의 메모 🐾</h4><div class="iconbtn">🔍</div></div>'+
+  '<div class="scroll">'+
+    '<div style="display:flex;gap:10px;align-items:center;background:var(--lav);border:2.5px solid var(--ink);border-radius:16px;padding:10px 12px;margin-bottom:14px;box-shadow:var(--shadow-sm)">'+
+      cat('happy',46)+'<div style="font-size:15px">모모가 어제 메모 <b>4개</b>를 정리했어요!</div></div>'+
+    '<div class="datehead">CATEGORIES</div>'+
+    catCard('✅','#9FD8BE','할 일','체크리스트 · 6개','TODO')+
+    catCard('🔗','#A6CCE8','참고자료','링크/요약 · 12개','REF')+
+    catCard('💡','#F6D67E','아이디어','타임라인 · 8개','IDEA')+
+    catCard('🛒','#F2A7B5','장보기','체크리스트 · 3개','TODO')+
+  '</div>'+
+  '<div class="fab">＋</div>'+bnav('home');
+};
+function catCard(emo,col,nm,ct,tag){
+  return '<div class="cat-card"><div class="top">'+
+    '<div class="cat-emoji" style="background:'+col+'">'+emo+'</div>'+
+    '<div style="flex:1"><div class="nm">'+nm+'</div><div class="ct">'+ct+'</div></div>'+
+    '<div class="tag">'+tag+'</div></div></div>';
+}
+
+S.capture=function(){return statusbar()+
+  '<div class="appbar"><h4>오늘의 메모 🐾</h4><div class="iconbtn">🔍</div></div>'+
+  '<div class="scroll" style="opacity:.35">'+catCard('✅','#9FD8BE','할 일','체크리스트 · 6개','TODO')+catCard('🔗','#A6CCE8','참고자료','링크/요약 · 12개','REF')+'</div>'+
+  '<div class="sheet"><div class="grab"></div>'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+cat('think',38)+'<b style="font-family:Jua;font-size:18px">그냥 떠오른 걸 적어요</b></div>'+
+    '<div class="capture-input"><span class="ph">예) 다음 주 화요일 치과 예약, 비타민 사기, 그리고…</span></div>'+
+    '<div class="cap-row"><div style="display:flex;gap:8px"><div class="iconbtn">🎙️</div><div class="iconbtn">📷</div></div>'+
+    '<div class="savebtn">저장 ✓</div></div>'+
+  '</div>';
+};
+
+S.classify=function(){return statusbar()+
+  '<div class="appbar"><h4>저장 중…</h4></div>'+
+  '<div class="classify-mid">'+cat('think',96)+
+    '<div class="thinkbubble">모모가 어울리는 분류를<br>찾고 있어요… 🔎</div>'+
+    '<div style="font-family:Press Start 2P;font-size:8px;color:var(--ink-soft)">LLM CLASSIFYING ▮▮▮▯▯</div>'+
+  '</div>';
+};
+
+S.result=function(){return statusbar()+
+  '<div class="appbar"><h4>분류 완료!</h4></div>'+
+  '<div class="classify-mid">'+cat('love',88)+
+    '<div class="result-card">'+
+      '<div style="font-size:16px;color:var(--ink-soft)">이 메모를 여기에 넣었어요</div>'+
+      '<div class="pill">✅ 할 일</div>'+
+      '<div style="font-size:15px;margin-top:12px;background:var(--cream);border:2px dashed var(--line-strong);border-radius:12px;padding:9px">“다음 주 화요일 치과 예약하기”</div>'+
+      '<div style="display:flex;gap:8px;margin-top:12px"><div style="flex:1;border:2px solid var(--ink);border-radius:12px;padding:8px;font-size:14px">↺ 다른 분류로</div><div style="flex:1;background:var(--mint);border:2px solid var(--ink);border-radius:12px;padding:8px;font-size:14px">확인 ✓</div></div>'+
+    '</div>'+
+  '</div>';
+};
+
+S.todo=function(){return statusbar()+
+  '<div class="appbar"><div style="display:flex;gap:8px;align-items:center"><div class="cat-emoji" style="background:var(--mint);width:34px;height:34px;font-size:18px">✅</div><h4>할 일</h4></div><div class="iconbtn">⋯</div></div>'+
+  '<div style="padding:0 16px 8px"><span class="tag">GENUI · CHECKLIST</span></div>'+
+  '<div class="scroll">'+
+    checkItem(true,'우유, 달걀 사기','어제')+
+    checkItem(false,'다음 주 화요일 치과 예약','오늘 추가')+
+    checkItem(false,'세금 신고 서류 정리','오늘 추가')+
+    checkItem(true,'책 반납하기','2일 전')+
+    checkItem(false,'운동화 끈 교체','오늘 추가')+
+    '<div style="text-align:center;margin-top:6px">'+cat('happy',44)+'<div style="font-size:14px;color:var(--ink-soft)">2개 완료! 잘하고 있어요</div></div>'+
+  '</div>'+bnav('');
+};
+function checkItem(on,t,m){
+  return '<div class="check-item"><div class="box '+(on?'on':'')+'">'+(on?'✓':'')+'</div>'+
+    '<div style="flex:1"><div class="'+(on?'done':'')+'">'+t+'</div></div>'+
+    '<small style="font-size:12px;color:var(--ink-soft)">'+m+'</small></div>';
+}
+
+S.ref=function(){return statusbar()+
+  '<div class="appbar"><div style="display:flex;gap:8px;align-items:center"><div class="cat-emoji" style="background:var(--sky);width:34px;height:34px;font-size:18px">🔗</div><h4>참고자료</h4></div><div class="iconbtn">⇅</div></div>'+
+  '<div style="padding:0 16px 8px"><span class="tag" style="background:var(--sky)">GENUI · 날짜순 + 요약</span></div>'+
+  '<div class="scroll">'+
+    '<div class="datehead">2026 · 6월 9일</div>'+
+    refCard('디자인 시스템 토큰 정리법','컬러·타이포·간격을 변수로 묶어 일관성을 유지하는 방법 정리.','figma.com/blog/tokens')+
+    refCard('LLM 분류 프롬프트 모음','few-shot 예시로 카테고리 매핑 정확도를 높이는 패턴.','github.com/awesome-llm')+
+    '<div class="datehead">6월 7일</div>'+
+    refCard('파스텔 UI 레퍼런스','셋로그·고양이 책집사 톤의 무드보드 30선.','pinterest.com/pastel-ui')+
+  '</div>'+bnav('');
+};
+function refCard(t,sum,lk){
+  return '<div class="ref-card"><div class="rt">🔗 '+t+'</div><div class="sum">'+
+    '<span style="font-family:Press Start 2P;font-size:6px;color:var(--lav-deep)">AI요약 </span>'+sum+'</div>'+
+    '<div class="lk">'+lk+'</div></div>';
+}
+
+S.idea=function(){return statusbar()+
+  '<div class="appbar"><div style="display:flex;gap:8px;align-items:center"><div class="cat-emoji" style="background:var(--butter);width:34px;height:34px;font-size:18px">💡</div><h4>아이디어</h4></div><div class="iconbtn">⋯</div></div>'+
+  '<div style="padding:0 16px 8px"><span class="tag">GENUI · 타임라인 카드</span></div>'+
+  '<div class="scroll">'+
+    ideaCard('주말 사이드 프로젝트','메모 앱에 위젯 추가하면 좋을 듯. 잠금화면에서 바로 캡처.','#F6D67E')+
+    ideaCard('블로그 글감','“도구가 분류를 대신하면 생기는 변화”','#F4A988')+
+    ideaCard('선물 아이디어','엄마 생신 — 손그림 일러스트 머그컵','#F2A7B5')+
+  '</div>'+bnav('');
+};
+function ideaCard(t,b,c){
+  return '<div class="cat-card" style="border-left:8px solid '+c+'"><div class="nm" style="font-size:17px">💡 '+t+'</div>'+
+    '<div style="font-size:15px;color:var(--ink-soft);margin-top:4px">'+b+'</div></div>';
+}
+
+S.onboard=function(){return statusbar()+
+  '<div class="ob-mid">'+cat('wave',120)+
+    '<h3>안녕! 나는 모모야 🐾</h3>'+
+    '<p>생각나는 걸 그냥 던져만 줘.<br>분류랑 정리는 내가 알아서 할게!</p>'+
+    '<div class="dots3"><i class="on"></i><i></i><i></i></div>'+
+  '</div>'+
+  '<div class="scr-pad"><div class="bigbtn">시작하기</div></div>';
+};
+
+S.onboardShortcut=function(){return statusbar()+
+  '<div class="ob-mid">'+cat('happy',96)+
+    '<h3>단축 동작 설정 ⚡</h3>'+
+    '<p>기기 버튼을 두 번 누르면<br>어디서나 메모창이 떠요.</p>'+
+    '<div style="background:var(--paper);border:2.5px solid var(--ink);border-radius:16px;padding:12px;width:100%;text-align:left;box-shadow:var(--shadow-sm)">'+
+      '<div style="font-size:15px;margin-bottom:6px">🍎 <b>iOS</b> — 뒷면 탭 두 번 (Back Tap)</div>'+
+      '<div style="font-size:15px">🤖 <b>Android</b> — 전원 버튼 두 번 / 퀵 타일</div>'+
+    '</div>'+
+    '<div class="dots3"><i></i><i class="on"></i><i></i></div>'+
+  '</div>'+
+  '<div class="scr-pad"><div class="bigbtn">단축 동작 켜기</div></div>';
+};
+
+S.settings=function(){return statusbar()+
+  '<div class="appbar"><h4>설정 ⚙️</h4></div>'+
+  '<div class="scroll">'+
+    '<div class="datehead">빠른 입력</div>'+
+    setRow('단축 동작 토글','버튼 두 번 누르기로 입력창 열기',true)+
+    setRow('잠금화면 위젯','잠금화면에서 바로 캡처',true)+
+    setRow('음성으로 입력','말하면 자동 텍스트 변환',false)+
+    '<div class="datehead">자동 분류</div>'+
+    setRow('LLM 자동 분류','저장 시 카테고리 자동 매핑',true)+
+    setRow('새 카테고리 자동 생성','어울리는 분류 없으면 새로 생성',true)+
+    setRow('분류 전 확인','저장 전 분류 결과 미리보기',false)+
+    '<div class="datehead">모모</div>'+
+    setRow('모모 반응 애니메이션','상황별 표정·움직임',true)+
+  '</div>'+bnav('set');
+};
+function setRow(t,d,on){
+  return '<div class="set-row"><div class="lbl"><b>'+t+'</b><small>'+d+'</small></div><div class="toggle '+(on?'':'off')+'"></div></div>';
+}
+
+S.empty=function(){return statusbar()+
+  '<div class="appbar"><h4>오늘의 메모 🐾</h4><div class="iconbtn">🔍</div></div>'+
+  '<div class="empty-mid">'+cat('sleep',120)+
+    '<b style="font-family:Jua;font-size:22px">아직 메모가 없어요</b>'+
+    '<p>＋ 버튼을 누르거나<br>버튼 두 번 눌러 첫 메모를 남겨봐요</p>'+
+  '</div>'+
+  '<div class="fab">＋</div>'+bnav('home');
+};
+
+S.search=function(){return statusbar()+
+  '<div class="appbar"><h4>탐색 🔍</h4></div>'+
+  '<div style="padding:0 16px 10px"><div style="background:var(--paper);border:2.5px solid var(--ink);border-radius:14px;padding:10px 12px;font-size:15px;color:var(--ink-soft);box-shadow:var(--shadow-sm)">🔍 메모, 카테고리 검색…</div></div>'+
+  '<div class="scroll">'+
+    '<div class="datehead">자주 찾는 분류</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'+
+      '<span class="chip" style="font-size:15px">✅ 할 일</span><span class="chip" style="font-size:15px">🔗 참고자료</span><span class="chip" style="font-size:15px">💡 아이디어</span><span class="chip" style="font-size:15px">🛒 장보기</span>'+
+    '</div>'+
+    '<div class="datehead">최근 메모</div>'+
+    '<div class="note-line">치과 예약하기<div class="meta">✅ 할 일 · 오늘</div></div>'+
+    '<div class="note-line">파스텔 UI 레퍼런스<div class="meta">🔗 참고자료 · 6월 7일</div></div>'+
+    '<div class="note-line">주말 사이드 프로젝트<div class="meta">💡 아이디어 · 6월 5일</div></div>'+
+  '</div>'+bnav('search');
+};
+
+/* ---------- Build gallery ---------- */
+var galleryList=[
+  ['온보딩 ①','첫 인사 — 모모 소개','onboard'],
+  ['온보딩 ②','단축 동작 설정 (iOS/AOS)','onboardShortcut'],
+  ['홈','카테고리 대시보드','home'],
+  ['빠른 캡처','내용만 입력하는 바텀시트','capture'],
+  ['자동 분류 중','LLM이 분류 찾는 상태','classify'],
+  ['분류 결과','매핑 결과 확인/수정','result'],
+  ['GenUI · 할 일','체크리스트 자동 생성','todo'],
+  ['GenUI · 참고자료','날짜순 + 링크 요약','ref'],
+  ['GenUI · 아이디어','타임라인 카드','idea'],
+  ['탐색','검색 & 최근 메모','search'],
+  ['설정','단축 동작·분류 옵션','settings'],
+  ['빈 화면','Empty state','empty']
+];
+var g=document.getElementById('gallery');
+galleryList.forEach(function(it){
+  var w=document.createElement('div');w.className='phone-wrap';
+  w.innerHTML='<div class="phone-cap"><b>'+it[0]+'</b><span>'+it[1]+'</span></div>'+
+    '<div class="phone"><div class="screen">'+S[it[2]]()+'</div></div>';
+  g.appendChild(w);
+});
+
+/* ---------- Mascot row ---------- */
+var mr=document.getElementById('mascotRow');
+[['happy','기쁨'],['think','분류중'],['love','저장완료'],['sleep','빈화면'],['wave','인사']].forEach(function(m){
+  var d=document.createElement('div');d.style.textAlign='center';
+  d.innerHTML=cat(m[0],54)+'<div style="font-size:13px;color:var(--ink-soft)">'+m[1]+'</div>';
+  mr.appendChild(d);
+});
+
+/* ---------- Interactive demo flow ---------- */
+var demoStates=['home','capture','classify','result','todo'];
+var demoHints=[
+  '👆 아래 <b>＋ 버튼</b>을 눌러 메모를 작성해보세요',
+  '✏️ 내용만 적고 <b>저장 ✓</b>를 눌러요 (카테고리는 신경 쓰지 마세요)',
+  '🤖 모모와 <b>LLM이 분류</b>하는 중…',
+  '🎉 <b>“할 일”</b>로 분류됐어요! 확인을 눌러요',
+  '🧩 카테고리에 맞는 <b>체크리스트 GenUI</b>가 생성됐어요! (처음으로 ↺)'
+];
+var di=0;
+var demoScreen=document.getElementById('demoScreen');
+var demoHint=document.getElementById('demoHint');
+function renderDemo(){
+  demoScreen.innerHTML=S[demoStates[di]]();
+  demoHint.innerHTML=demoHints[di];
+  demoScreen.classList.add('tappable');
+  // auto-advance for classify state
+  if(demoStates[di]==='classify'){
+    setTimeout(function(){ if(demoStates[di]==='classify'){di=3;renderDemo();} },1600);
+  }
+}
+demoScreen.addEventListener('click',function(){
+  if(demoStates[di]==='classify') return;
+  di=(di+1)%demoStates.length;
+  renderDemo();
+});
+renderDemo();
+</script>
+</body>
+</html>
