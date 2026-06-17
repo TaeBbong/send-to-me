@@ -1,0 +1,54 @@
+name: awesome_memo
+description: "Awesome Memo — a messenger-style memo app with LLM auto-classification and generative UI."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Routing
+  go_router: ^16.1.0
+
+  # Immutable models / serialization
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # Local-first persistence
+  drift: ^2.28.0
+  drift_flutter: ^0.2.6
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+  # Firebase AI Logic (Gemini) + Generative UI
+  firebase_core: ^4.1.1
+  firebase_ai: ^3.12.2
+  genui: ^0.9.2
+
+  # Settings persistence
+  shared_preferences: ^2.5.3
+
+  # Utilities
+  uuid: ^4.5.1
+  intl: ^0.20.2
+  url_launcher: ^6.3.2
+  collection: ^1.19.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  build_runner: ^2.5.4
+  freezed: ^3.2.0
+  json_serializable: ^6.9.5
+  drift_dev: ^2.28.0
+
+flutter:
+  uses-material-design: true
