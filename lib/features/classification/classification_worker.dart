@@ -109,9 +109,12 @@ class ClassificationWorker {
     );
 
     // Best-effort, non-blocking: fetch the page title so reference cards show
-    // what the link is. The room updates reactively when it arrives.
-    if (sourceUrl != null && memo.linkTitle == null) {
-      unawaited(_fetchLinkTitle(memo.id, sourceUrl));
+    // what the link is. Fetch the URL exactly as the user typed it — the
+    // model's echoed sourceUrl may be re-encoded/trimmed and 404 — and let the
+    // room update reactively when the title arrives.
+    final fetchUrl = UrlDetector.firstUrl(memo.content) ?? sourceUrl;
+    if (fetchUrl != null && memo.linkTitle == null) {
+      unawaited(_fetchLinkTitle(memo.id, fetchUrl));
     }
 
     // Bump the category so its "room" floats to the top of the list.

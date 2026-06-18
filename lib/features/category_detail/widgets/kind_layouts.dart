@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/url_detector.dart';
 import '../../../domain/entities/enums.dart';
 import '../../../domain/entities/memo.dart';
 import '../../memo_chat/memo_chat_providers.dart';
@@ -130,8 +131,10 @@ class _ReferenceLayout extends StatelessWidget {
         final memo = ordered[index];
         final url = memo.sourceUrl;
         final host = url != null ? Uri.tryParse(url)?.host : null;
-        // Prefer the fetched page title, then the host, then the raw text.
+        // Title: the fetched page title, else the clean domain. Subtitle always
+        // carries the full decoded link below it.
         final title = memo.linkTitle ?? host ?? url ?? memo.content;
+        final subtitleUrl = url == null ? null : UrlDetector.pretty(url);
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -156,12 +159,12 @@ class _ReferenceLayout extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (host != null) ...[
+                if (subtitleUrl != null) ...[
                   const SizedBox(height: 2),
                   Padding(
                     padding: const EdgeInsets.only(left: 24),
                     child: Text(
-                      host,
+                      subtitleUrl,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textTheme.labelSmall?.copyWith(
