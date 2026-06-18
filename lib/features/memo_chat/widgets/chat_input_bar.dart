@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
@@ -15,22 +16,78 @@ class ChatInputBar extends StatefulWidget {
   State<ChatInputBar> createState() => _ChatInputBarState();
 }
 
-class _ChatInputBarState extends State<ChatInputBar> {
+class _ChatInputBarState extends State<ChatInputBar>
+    with WidgetsBindingObserver {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   bool _hasText = false;
 
+  /// Clipboard text offered as a one-tap paste, or null when nothing is offered.
+  String? _clipboardSuggestion;
+
+  /// Last clipboard text the user explicitly dismissed, so we don't nag again
+  /// until the clipboard contents change.
+  String? _dismissed;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller.addListener(() {
       final has = _controller.text.trim().isNotEmpty;
       if (has != _hasText) setState(() => _hasText = has);
+      // Hide the paste chip the moment the user starts typing.
+      if (has && _clipboardSuggestion != null) {
+        setState(() => _clipboardSuggestion = null);
+      }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeOfferPaste());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Re-check whenever the user returns to the app — they may have just copied
+    // something in another app to paste here.
+    if (state == AppLifecycleState.resumed) _maybeOfferPaste();
+  }
+
+  /// Offers a clipboard paste only when the field is empty. Uses [hasStrings]
+  /// (which does NOT trip iOS's "pasted from…" banner) to gate the actual read.
+  Future<void> _maybeOfferPaste() async {
+    if (_controller.text.trim().isNotEmpty) return;
+    if (!await Clipboard.hasStrings()) {
+      if (mounted && _clipboardSuggestion != null) {
+        setState(() => _clipboardSuggestion = null);
+      }
+      return;
+    }
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final text = data?.text?.trim();
+    if (!mounted) return;
+    if (text == null || text.isEmpty || text == _dismissed) return;
+    if (text == _clipboardSuggestion) return;
+    setState(() => _clipboardSuggestion = text);
+  }
+
+  void _usePaste() {
+    final text = _clipboardSuggestion;
+    if (text == null) return;
+    _controller.text = text;
+    _controller.selection = TextSelection.collapsed(offset: text.length);
+    setState(() => _clipboardSuggestion = null);
+    _focusNode.requestFocus();
+  }
+
+  void _dismissPaste() {
+    setState(() {
+      _dismissed = _clipboardSuggestion;
+      _clipboardSuggestion = null;
     });
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -54,7 +111,16 @@ class _ChatInputBarState extends State<ChatInputBar> {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_clipboardSuggestion != null)
+              _ClipboardChip(
+                text: _clipboardSuggestion!,
+                onTap: _usePaste,
+                onDismiss: _dismissPaste,
+              ),
+            Padding(
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.md,
             AppSpacing.sm,
@@ -82,6 +148,8 @@ class _ChatInputBarState extends State<ChatInputBar> {
               _SendButton(enabled: _hasText, onTap: _submit),
             ],
           ),
+            ),
+          ],
         ),
       ),
     );
@@ -108,6 +176,90 @@ class _SendButton extends StatelessWidget {
         color: Colors.white,
         iconSize: 22,
         padding: EdgeInsets.zero,
+      ),
+    );
+  }
+}
+
+/// A one-tap "paste what you just copied" suggestion shown above the composer
+/// when the clipboard holds text and the field is empty.
+class _ClipboardChip extends StatelessWidget {
+  const _ClipboardChip({
+    required this.text,
+    required this.onTap,
+    required this.onDismiss,
+  });
+
+  final String text;
+  final VoidCallback onTap;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.appColors;
+    final preview = text.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.sm,
+        0,
+      ),
+      child: Material(
+        color: context.colors.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.content_paste_rounded,
+                  size: 18,
+                  color: context.colors.primary,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      style: context.textTheme.bodySmall,
+                      children: [
+                        TextSpan(
+                          text: '붙여넣기  ',
+                          style: TextStyle(
+                            color: context.colors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        TextSpan(
+                          text: preview,
+                          style: TextStyle(color: c.textSecondary),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                InkResponse(
+                  onTap: onDismiss,
+                  radius: 18,
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 18,
+                    color: c.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

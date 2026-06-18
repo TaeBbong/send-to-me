@@ -36,6 +36,14 @@ target 'Runner' do
   end
 end
 
+# share_handler: the Share Extension target needs the shared models pod.
+# It must also set use_frameworks! to match the Runner host target.
+target 'ShareExtension' do
+  use_frameworks!
+  inherit! :search_paths
+  pod 'share_handler_ios_models', :path => '.symlinks/plugins/share_handler_ios/ios/Models'
+end
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
