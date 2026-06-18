@@ -12,10 +12,13 @@ abstract final class AppConstants {
   static const String defaultModel = 'gemini-3.5-flash';
   static const String fallbackModel = 'gemini-2.5-flash';
 
-  /// Selectable models surfaced in Settings.
+  /// Selectable models surfaced in Settings. `gemini-2.5-flash-lite` is the
+  /// fastest/cheapest option — a good fit for the lightweight classification
+  /// task if `flash` feels slow.
   static const List<String> selectableModels = [
     'gemini-3.5-flash',
     'gemini-2.5-flash',
+    'gemini-2.5-flash-lite',
     'gemini-2.5-pro',
   ];
 

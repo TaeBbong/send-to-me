@@ -29,11 +29,19 @@ abstract class Memo with _$Memo {
     /// Checklist state, meaningful when the memo lives in a TODO category.
     @Default(false) bool isDone,
 
+    /// When the memo was checked off ([isDone] flipped to true); cleared when
+    /// unchecked. Lets a TODO room show both registered and completed times.
+    DateTime? doneAt,
+
     /// Optional due date the classifier may extract from the text.
     DateTime? dueAt,
 
     /// When the memo was successfully classified.
     DateTime? classifiedAt,
+
+    /// Page title fetched for [sourceUrl] (og:title / <title>), so a reference
+    /// card can show what the link actually is rather than just its host.
+    String? linkTitle,
   }) = _Memo;
 
   const Memo._();

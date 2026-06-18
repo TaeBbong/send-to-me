@@ -22,7 +22,6 @@ class ClassificationResult {
     this.sourceUrl,
     this.isDone = false,
     this.dueAt,
-    this.reasoning,
   });
 
   /// Id of an existing category the memo matches, or null to create a new one.
@@ -44,9 +43,6 @@ class ClassificationResult {
 
   /// An optional due date (ISO-8601) extracted from the text.
   final DateTime? dueAt;
-
-  /// Short rationale, useful for debugging / showing "why here".
-  final String? reasoning;
 
   bool get createsNewCategory =>
       matchedCategoryId == null || matchedCategoryId!.isEmpty;
@@ -76,7 +72,6 @@ class ClassificationResult {
       sourceUrl: str('sourceUrl'),
       isDone: json['isDone'] == true,
       dueAt: parseDate(str('dueAt')),
-      reasoning: str('reasoning'),
     );
   }
 }

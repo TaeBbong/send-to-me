@@ -604,6 +604,15 @@ class $MemosTable extends Memos with TableInfo<$MemosTable, MemoRow> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _doneAtMeta = const VerificationMeta('doneAt');
+  @override
+  late final GeneratedColumn<DateTime> doneAt = GeneratedColumn<DateTime>(
+    'done_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _dueAtMeta = const VerificationMeta('dueAt');
   @override
   late final GeneratedColumn<DateTime> dueAt = GeneratedColumn<DateTime>(
@@ -624,6 +633,17 @@ class $MemosTable extends Memos with TableInfo<$MemosTable, MemoRow> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _linkTitleMeta = const VerificationMeta(
+    'linkTitle',
+  );
+  @override
+  late final GeneratedColumn<String> linkTitle = GeneratedColumn<String>(
+    'link_title',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -634,8 +654,10 @@ class $MemosTable extends Memos with TableInfo<$MemosTable, MemoRow> {
     summary,
     sourceUrl,
     isDone,
+    doneAt,
     dueAt,
     classifiedAt,
+    linkTitle,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -702,6 +724,12 @@ class $MemosTable extends Memos with TableInfo<$MemosTable, MemoRow> {
         isDone.isAcceptableOrUnknown(data['is_done']!, _isDoneMeta),
       );
     }
+    if (data.containsKey('done_at')) {
+      context.handle(
+        _doneAtMeta,
+        doneAt.isAcceptableOrUnknown(data['done_at']!, _doneAtMeta),
+      );
+    }
     if (data.containsKey('due_at')) {
       context.handle(
         _dueAtMeta,
@@ -715,6 +743,12 @@ class $MemosTable extends Memos with TableInfo<$MemosTable, MemoRow> {
           data['classified_at']!,
           _classifiedAtMeta,
         ),
+      );
+    }
+    if (data.containsKey('link_title')) {
+      context.handle(
+        _linkTitleMeta,
+        linkTitle.isAcceptableOrUnknown(data['link_title']!, _linkTitleMeta),
       );
     }
     return context;
@@ -758,6 +792,10 @@ class $MemosTable extends Memos with TableInfo<$MemosTable, MemoRow> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_done'],
       )!,
+      doneAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}done_at'],
+      ),
       dueAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}due_at'],
@@ -765,6 +803,10 @@ class $MemosTable extends Memos with TableInfo<$MemosTable, MemoRow> {
       classifiedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}classified_at'],
+      ),
+      linkTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}link_title'],
       ),
     );
   }
@@ -784,8 +826,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
   final String? summary;
   final String? sourceUrl;
   final bool isDone;
+  final DateTime? doneAt;
   final DateTime? dueAt;
   final DateTime? classifiedAt;
+  final String? linkTitle;
   const MemoRow({
     required this.id,
     required this.content,
@@ -795,8 +839,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
     this.summary,
     this.sourceUrl,
     required this.isDone,
+    this.doneAt,
     this.dueAt,
     this.classifiedAt,
+    this.linkTitle,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -815,11 +861,17 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
       map['source_url'] = Variable<String>(sourceUrl);
     }
     map['is_done'] = Variable<bool>(isDone);
+    if (!nullToAbsent || doneAt != null) {
+      map['done_at'] = Variable<DateTime>(doneAt);
+    }
     if (!nullToAbsent || dueAt != null) {
       map['due_at'] = Variable<DateTime>(dueAt);
     }
     if (!nullToAbsent || classifiedAt != null) {
       map['classified_at'] = Variable<DateTime>(classifiedAt);
+    }
+    if (!nullToAbsent || linkTitle != null) {
+      map['link_title'] = Variable<String>(linkTitle);
     }
     return map;
   }
@@ -840,12 +892,18 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
           ? const Value.absent()
           : Value(sourceUrl),
       isDone: Value(isDone),
+      doneAt: doneAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(doneAt),
       dueAt: dueAt == null && nullToAbsent
           ? const Value.absent()
           : Value(dueAt),
       classifiedAt: classifiedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(classifiedAt),
+      linkTitle: linkTitle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkTitle),
     );
   }
 
@@ -863,8 +921,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
       summary: serializer.fromJson<String?>(json['summary']),
       sourceUrl: serializer.fromJson<String?>(json['sourceUrl']),
       isDone: serializer.fromJson<bool>(json['isDone']),
+      doneAt: serializer.fromJson<DateTime?>(json['doneAt']),
       dueAt: serializer.fromJson<DateTime?>(json['dueAt']),
       classifiedAt: serializer.fromJson<DateTime?>(json['classifiedAt']),
+      linkTitle: serializer.fromJson<String?>(json['linkTitle']),
     );
   }
   @override
@@ -879,8 +939,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
       'summary': serializer.toJson<String?>(summary),
       'sourceUrl': serializer.toJson<String?>(sourceUrl),
       'isDone': serializer.toJson<bool>(isDone),
+      'doneAt': serializer.toJson<DateTime?>(doneAt),
       'dueAt': serializer.toJson<DateTime?>(dueAt),
       'classifiedAt': serializer.toJson<DateTime?>(classifiedAt),
+      'linkTitle': serializer.toJson<String?>(linkTitle),
     };
   }
 
@@ -893,8 +955,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
     Value<String?> summary = const Value.absent(),
     Value<String?> sourceUrl = const Value.absent(),
     bool? isDone,
+    Value<DateTime?> doneAt = const Value.absent(),
     Value<DateTime?> dueAt = const Value.absent(),
     Value<DateTime?> classifiedAt = const Value.absent(),
+    Value<String?> linkTitle = const Value.absent(),
   }) => MemoRow(
     id: id ?? this.id,
     content: content ?? this.content,
@@ -904,8 +968,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
     summary: summary.present ? summary.value : this.summary,
     sourceUrl: sourceUrl.present ? sourceUrl.value : this.sourceUrl,
     isDone: isDone ?? this.isDone,
+    doneAt: doneAt.present ? doneAt.value : this.doneAt,
     dueAt: dueAt.present ? dueAt.value : this.dueAt,
     classifiedAt: classifiedAt.present ? classifiedAt.value : this.classifiedAt,
+    linkTitle: linkTitle.present ? linkTitle.value : this.linkTitle,
   );
   MemoRow copyWithCompanion(MemosCompanion data) {
     return MemoRow(
@@ -919,10 +985,12 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
       summary: data.summary.present ? data.summary.value : this.summary,
       sourceUrl: data.sourceUrl.present ? data.sourceUrl.value : this.sourceUrl,
       isDone: data.isDone.present ? data.isDone.value : this.isDone,
+      doneAt: data.doneAt.present ? data.doneAt.value : this.doneAt,
       dueAt: data.dueAt.present ? data.dueAt.value : this.dueAt,
       classifiedAt: data.classifiedAt.present
           ? data.classifiedAt.value
           : this.classifiedAt,
+      linkTitle: data.linkTitle.present ? data.linkTitle.value : this.linkTitle,
     );
   }
 
@@ -937,8 +1005,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
           ..write('summary: $summary, ')
           ..write('sourceUrl: $sourceUrl, ')
           ..write('isDone: $isDone, ')
+          ..write('doneAt: $doneAt, ')
           ..write('dueAt: $dueAt, ')
-          ..write('classifiedAt: $classifiedAt')
+          ..write('classifiedAt: $classifiedAt, ')
+          ..write('linkTitle: $linkTitle')
           ..write(')'))
         .toString();
   }
@@ -953,8 +1023,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
     summary,
     sourceUrl,
     isDone,
+    doneAt,
     dueAt,
     classifiedAt,
+    linkTitle,
   );
   @override
   bool operator ==(Object other) =>
@@ -968,8 +1040,10 @@ class MemoRow extends DataClass implements Insertable<MemoRow> {
           other.summary == this.summary &&
           other.sourceUrl == this.sourceUrl &&
           other.isDone == this.isDone &&
+          other.doneAt == this.doneAt &&
           other.dueAt == this.dueAt &&
-          other.classifiedAt == this.classifiedAt);
+          other.classifiedAt == this.classifiedAt &&
+          other.linkTitle == this.linkTitle);
 }
 
 class MemosCompanion extends UpdateCompanion<MemoRow> {
@@ -981,8 +1055,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
   final Value<String?> summary;
   final Value<String?> sourceUrl;
   final Value<bool> isDone;
+  final Value<DateTime?> doneAt;
   final Value<DateTime?> dueAt;
   final Value<DateTime?> classifiedAt;
+  final Value<String?> linkTitle;
   final Value<int> rowid;
   const MemosCompanion({
     this.id = const Value.absent(),
@@ -993,8 +1069,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
     this.summary = const Value.absent(),
     this.sourceUrl = const Value.absent(),
     this.isDone = const Value.absent(),
+    this.doneAt = const Value.absent(),
     this.dueAt = const Value.absent(),
     this.classifiedAt = const Value.absent(),
+    this.linkTitle = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MemosCompanion.insert({
@@ -1006,8 +1084,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
     this.summary = const Value.absent(),
     this.sourceUrl = const Value.absent(),
     this.isDone = const Value.absent(),
+    this.doneAt = const Value.absent(),
     this.dueAt = const Value.absent(),
     this.classifiedAt = const Value.absent(),
+    this.linkTitle = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        content = Value(content),
@@ -1022,8 +1102,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
     Expression<String>? summary,
     Expression<String>? sourceUrl,
     Expression<bool>? isDone,
+    Expression<DateTime>? doneAt,
     Expression<DateTime>? dueAt,
     Expression<DateTime>? classifiedAt,
+    Expression<String>? linkTitle,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1035,8 +1117,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
       if (summary != null) 'summary': summary,
       if (sourceUrl != null) 'source_url': sourceUrl,
       if (isDone != null) 'is_done': isDone,
+      if (doneAt != null) 'done_at': doneAt,
       if (dueAt != null) 'due_at': dueAt,
       if (classifiedAt != null) 'classified_at': classifiedAt,
+      if (linkTitle != null) 'link_title': linkTitle,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1050,8 +1134,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
     Value<String?>? summary,
     Value<String?>? sourceUrl,
     Value<bool>? isDone,
+    Value<DateTime?>? doneAt,
     Value<DateTime?>? dueAt,
     Value<DateTime?>? classifiedAt,
+    Value<String?>? linkTitle,
     Value<int>? rowid,
   }) {
     return MemosCompanion(
@@ -1063,8 +1149,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
       summary: summary ?? this.summary,
       sourceUrl: sourceUrl ?? this.sourceUrl,
       isDone: isDone ?? this.isDone,
+      doneAt: doneAt ?? this.doneAt,
       dueAt: dueAt ?? this.dueAt,
       classifiedAt: classifiedAt ?? this.classifiedAt,
+      linkTitle: linkTitle ?? this.linkTitle,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1096,11 +1184,17 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
     if (isDone.present) {
       map['is_done'] = Variable<bool>(isDone.value);
     }
+    if (doneAt.present) {
+      map['done_at'] = Variable<DateTime>(doneAt.value);
+    }
     if (dueAt.present) {
       map['due_at'] = Variable<DateTime>(dueAt.value);
     }
     if (classifiedAt.present) {
       map['classified_at'] = Variable<DateTime>(classifiedAt.value);
+    }
+    if (linkTitle.present) {
+      map['link_title'] = Variable<String>(linkTitle.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1119,334 +1213,10 @@ class MemosCompanion extends UpdateCompanion<MemoRow> {
           ..write('summary: $summary, ')
           ..write('sourceUrl: $sourceUrl, ')
           ..write('isDone: $isDone, ')
+          ..write('doneAt: $doneAt, ')
           ..write('dueAt: $dueAt, ')
           ..write('classifiedAt: $classifiedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $GenUiCachesTable extends GenUiCaches
-    with TableInfo<$GenUiCachesTable, GenUiCacheRow> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $GenUiCachesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
-    'categoryId',
-  );
-  @override
-  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
-    'category_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _payloadMeta = const VerificationMeta(
-    'payload',
-  );
-  @override
-  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
-    'payload',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _signatureMeta = const VerificationMeta(
-    'signature',
-  );
-  @override
-  late final GeneratedColumn<String> signature = GeneratedColumn<String>(
-    'signature',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    categoryId,
-    payload,
-    signature,
-    updatedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'gen_ui_caches';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<GenUiCacheRow> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('category_id')) {
-      context.handle(
-        _categoryIdMeta,
-        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_categoryIdMeta);
-    }
-    if (data.containsKey('payload')) {
-      context.handle(
-        _payloadMeta,
-        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_payloadMeta);
-    }
-    if (data.containsKey('signature')) {
-      context.handle(
-        _signatureMeta,
-        signature.isAcceptableOrUnknown(data['signature']!, _signatureMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_signatureMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {categoryId};
-  @override
-  GenUiCacheRow map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return GenUiCacheRow(
-      categoryId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}category_id'],
-      )!,
-      payload: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}payload'],
-      )!,
-      signature: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}signature'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-    );
-  }
-
-  @override
-  $GenUiCachesTable createAlias(String alias) {
-    return $GenUiCachesTable(attachedDatabase, alias);
-  }
-}
-
-class GenUiCacheRow extends DataClass implements Insertable<GenUiCacheRow> {
-  final String categoryId;
-
-  /// The concatenated A2UI protocol text the model produced.
-  final String payload;
-
-  /// Signature of the memo set the payload was built from, to detect staleness.
-  final String signature;
-  final DateTime updatedAt;
-  const GenUiCacheRow({
-    required this.categoryId,
-    required this.payload,
-    required this.signature,
-    required this.updatedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['category_id'] = Variable<String>(categoryId);
-    map['payload'] = Variable<String>(payload);
-    map['signature'] = Variable<String>(signature);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    return map;
-  }
-
-  GenUiCachesCompanion toCompanion(bool nullToAbsent) {
-    return GenUiCachesCompanion(
-      categoryId: Value(categoryId),
-      payload: Value(payload),
-      signature: Value(signature),
-      updatedAt: Value(updatedAt),
-    );
-  }
-
-  factory GenUiCacheRow.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return GenUiCacheRow(
-      categoryId: serializer.fromJson<String>(json['categoryId']),
-      payload: serializer.fromJson<String>(json['payload']),
-      signature: serializer.fromJson<String>(json['signature']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'categoryId': serializer.toJson<String>(categoryId),
-      'payload': serializer.toJson<String>(payload),
-      'signature': serializer.toJson<String>(signature),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-    };
-  }
-
-  GenUiCacheRow copyWith({
-    String? categoryId,
-    String? payload,
-    String? signature,
-    DateTime? updatedAt,
-  }) => GenUiCacheRow(
-    categoryId: categoryId ?? this.categoryId,
-    payload: payload ?? this.payload,
-    signature: signature ?? this.signature,
-    updatedAt: updatedAt ?? this.updatedAt,
-  );
-  GenUiCacheRow copyWithCompanion(GenUiCachesCompanion data) {
-    return GenUiCacheRow(
-      categoryId: data.categoryId.present
-          ? data.categoryId.value
-          : this.categoryId,
-      payload: data.payload.present ? data.payload.value : this.payload,
-      signature: data.signature.present ? data.signature.value : this.signature,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('GenUiCacheRow(')
-          ..write('categoryId: $categoryId, ')
-          ..write('payload: $payload, ')
-          ..write('signature: $signature, ')
-          ..write('updatedAt: $updatedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(categoryId, payload, signature, updatedAt);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is GenUiCacheRow &&
-          other.categoryId == this.categoryId &&
-          other.payload == this.payload &&
-          other.signature == this.signature &&
-          other.updatedAt == this.updatedAt);
-}
-
-class GenUiCachesCompanion extends UpdateCompanion<GenUiCacheRow> {
-  final Value<String> categoryId;
-  final Value<String> payload;
-  final Value<String> signature;
-  final Value<DateTime> updatedAt;
-  final Value<int> rowid;
-  const GenUiCachesCompanion({
-    this.categoryId = const Value.absent(),
-    this.payload = const Value.absent(),
-    this.signature = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  GenUiCachesCompanion.insert({
-    required String categoryId,
-    required String payload,
-    required String signature,
-    required DateTime updatedAt,
-    this.rowid = const Value.absent(),
-  }) : categoryId = Value(categoryId),
-       payload = Value(payload),
-       signature = Value(signature),
-       updatedAt = Value(updatedAt);
-  static Insertable<GenUiCacheRow> custom({
-    Expression<String>? categoryId,
-    Expression<String>? payload,
-    Expression<String>? signature,
-    Expression<DateTime>? updatedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (categoryId != null) 'category_id': categoryId,
-      if (payload != null) 'payload': payload,
-      if (signature != null) 'signature': signature,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  GenUiCachesCompanion copyWith({
-    Value<String>? categoryId,
-    Value<String>? payload,
-    Value<String>? signature,
-    Value<DateTime>? updatedAt,
-    Value<int>? rowid,
-  }) {
-    return GenUiCachesCompanion(
-      categoryId: categoryId ?? this.categoryId,
-      payload: payload ?? this.payload,
-      signature: signature ?? this.signature,
-      updatedAt: updatedAt ?? this.updatedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (categoryId.present) {
-      map['category_id'] = Variable<String>(categoryId.value);
-    }
-    if (payload.present) {
-      map['payload'] = Variable<String>(payload.value);
-    }
-    if (signature.present) {
-      map['signature'] = Variable<String>(signature.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('GenUiCachesCompanion(')
-          ..write('categoryId: $categoryId, ')
-          ..write('payload: $payload, ')
-          ..write('signature: $signature, ')
-          ..write('updatedAt: $updatedAt, ')
+          ..write('linkTitle: $linkTitle, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1458,16 +1228,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $MemosTable memos = $MemosTable(this);
-  late final $GenUiCachesTable genUiCaches = $GenUiCachesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [
-    categories,
-    memos,
-    genUiCaches,
-  ];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [categories, memos];
 }
 
 typedef $$CategoriesTableCreateCompanionBuilder =
@@ -1739,8 +1504,10 @@ typedef $$MemosTableCreateCompanionBuilder =
       Value<String?> summary,
       Value<String?> sourceUrl,
       Value<bool> isDone,
+      Value<DateTime?> doneAt,
       Value<DateTime?> dueAt,
       Value<DateTime?> classifiedAt,
+      Value<String?> linkTitle,
       Value<int> rowid,
     });
 typedef $$MemosTableUpdateCompanionBuilder =
@@ -1753,8 +1520,10 @@ typedef $$MemosTableUpdateCompanionBuilder =
       Value<String?> summary,
       Value<String?> sourceUrl,
       Value<bool> isDone,
+      Value<DateTime?> doneAt,
       Value<DateTime?> dueAt,
       Value<DateTime?> classifiedAt,
+      Value<String?> linkTitle,
       Value<int> rowid,
     });
 
@@ -1806,6 +1575,11 @@ class $$MemosTableFilterComposer extends Composer<_$AppDatabase, $MemosTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<DateTime> get doneAt => $composableBuilder(
+    column: $table.doneAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get dueAt => $composableBuilder(
     column: $table.dueAt,
     builder: (column) => ColumnFilters(column),
@@ -1813,6 +1587,11 @@ class $$MemosTableFilterComposer extends Composer<_$AppDatabase, $MemosTable> {
 
   ColumnFilters<DateTime> get classifiedAt => $composableBuilder(
     column: $table.classifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get linkTitle => $composableBuilder(
+    column: $table.linkTitle,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1866,6 +1645,11 @@ class $$MemosTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get doneAt => $composableBuilder(
+    column: $table.doneAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get dueAt => $composableBuilder(
     column: $table.dueAt,
     builder: (column) => ColumnOrderings(column),
@@ -1873,6 +1657,11 @@ class $$MemosTableOrderingComposer
 
   ColumnOrderings<DateTime> get classifiedAt => $composableBuilder(
     column: $table.classifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get linkTitle => $composableBuilder(
+    column: $table.linkTitle,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -1912,6 +1701,9 @@ class $$MemosTableAnnotationComposer
   GeneratedColumn<bool> get isDone =>
       $composableBuilder(column: $table.isDone, builder: (column) => column);
 
+  GeneratedColumn<DateTime> get doneAt =>
+      $composableBuilder(column: $table.doneAt, builder: (column) => column);
+
   GeneratedColumn<DateTime> get dueAt =>
       $composableBuilder(column: $table.dueAt, builder: (column) => column);
 
@@ -1919,6 +1711,9 @@ class $$MemosTableAnnotationComposer
     column: $table.classifiedAt,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get linkTitle =>
+      $composableBuilder(column: $table.linkTitle, builder: (column) => column);
 }
 
 class $$MemosTableTableManager
@@ -1957,8 +1752,10 @@ class $$MemosTableTableManager
                 Value<String?> summary = const Value.absent(),
                 Value<String?> sourceUrl = const Value.absent(),
                 Value<bool> isDone = const Value.absent(),
+                Value<DateTime?> doneAt = const Value.absent(),
                 Value<DateTime?> dueAt = const Value.absent(),
                 Value<DateTime?> classifiedAt = const Value.absent(),
+                Value<String?> linkTitle = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MemosCompanion(
                 id: id,
@@ -1969,8 +1766,10 @@ class $$MemosTableTableManager
                 summary: summary,
                 sourceUrl: sourceUrl,
                 isDone: isDone,
+                doneAt: doneAt,
                 dueAt: dueAt,
                 classifiedAt: classifiedAt,
+                linkTitle: linkTitle,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1983,8 +1782,10 @@ class $$MemosTableTableManager
                 Value<String?> summary = const Value.absent(),
                 Value<String?> sourceUrl = const Value.absent(),
                 Value<bool> isDone = const Value.absent(),
+                Value<DateTime?> doneAt = const Value.absent(),
                 Value<DateTime?> dueAt = const Value.absent(),
                 Value<DateTime?> classifiedAt = const Value.absent(),
+                Value<String?> linkTitle = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MemosCompanion.insert(
                 id: id,
@@ -1995,8 +1796,10 @@ class $$MemosTableTableManager
                 summary: summary,
                 sourceUrl: sourceUrl,
                 isDone: isDone,
+                doneAt: doneAt,
                 dueAt: dueAt,
                 classifiedAt: classifiedAt,
+                linkTitle: linkTitle,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -2021,189 +1824,6 @@ typedef $$MemosTableProcessedTableManager =
       MemoRow,
       PrefetchHooks Function()
     >;
-typedef $$GenUiCachesTableCreateCompanionBuilder =
-    GenUiCachesCompanion Function({
-      required String categoryId,
-      required String payload,
-      required String signature,
-      required DateTime updatedAt,
-      Value<int> rowid,
-    });
-typedef $$GenUiCachesTableUpdateCompanionBuilder =
-    GenUiCachesCompanion Function({
-      Value<String> categoryId,
-      Value<String> payload,
-      Value<String> signature,
-      Value<DateTime> updatedAt,
-      Value<int> rowid,
-    });
-
-class $$GenUiCachesTableFilterComposer
-    extends Composer<_$AppDatabase, $GenUiCachesTable> {
-  $$GenUiCachesTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get categoryId => $composableBuilder(
-    column: $table.categoryId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get payload => $composableBuilder(
-    column: $table.payload,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get signature => $composableBuilder(
-    column: $table.signature,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$GenUiCachesTableOrderingComposer
-    extends Composer<_$AppDatabase, $GenUiCachesTable> {
-  $$GenUiCachesTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get categoryId => $composableBuilder(
-    column: $table.categoryId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get payload => $composableBuilder(
-    column: $table.payload,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get signature => $composableBuilder(
-    column: $table.signature,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$GenUiCachesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $GenUiCachesTable> {
-  $$GenUiCachesTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get categoryId => $composableBuilder(
-    column: $table.categoryId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get payload =>
-      $composableBuilder(column: $table.payload, builder: (column) => column);
-
-  GeneratedColumn<String> get signature =>
-      $composableBuilder(column: $table.signature, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-}
-
-class $$GenUiCachesTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $GenUiCachesTable,
-          GenUiCacheRow,
-          $$GenUiCachesTableFilterComposer,
-          $$GenUiCachesTableOrderingComposer,
-          $$GenUiCachesTableAnnotationComposer,
-          $$GenUiCachesTableCreateCompanionBuilder,
-          $$GenUiCachesTableUpdateCompanionBuilder,
-          (
-            GenUiCacheRow,
-            BaseReferences<_$AppDatabase, $GenUiCachesTable, GenUiCacheRow>,
-          ),
-          GenUiCacheRow,
-          PrefetchHooks Function()
-        > {
-  $$GenUiCachesTableTableManager(_$AppDatabase db, $GenUiCachesTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$GenUiCachesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$GenUiCachesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$GenUiCachesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> categoryId = const Value.absent(),
-                Value<String> payload = const Value.absent(),
-                Value<String> signature = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => GenUiCachesCompanion(
-                categoryId: categoryId,
-                payload: payload,
-                signature: signature,
-                updatedAt: updatedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String categoryId,
-                required String payload,
-                required String signature,
-                required DateTime updatedAt,
-                Value<int> rowid = const Value.absent(),
-              }) => GenUiCachesCompanion.insert(
-                categoryId: categoryId,
-                payload: payload,
-                signature: signature,
-                updatedAt: updatedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$GenUiCachesTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $GenUiCachesTable,
-      GenUiCacheRow,
-      $$GenUiCachesTableFilterComposer,
-      $$GenUiCachesTableOrderingComposer,
-      $$GenUiCachesTableAnnotationComposer,
-      $$GenUiCachesTableCreateCompanionBuilder,
-      $$GenUiCachesTableUpdateCompanionBuilder,
-      (
-        GenUiCacheRow,
-        BaseReferences<_$AppDatabase, $GenUiCachesTable, GenUiCacheRow>,
-      ),
-      GenUiCacheRow,
-      PrefetchHooks Function()
-    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2212,6 +1832,4 @@ class $AppDatabaseManager {
       $$CategoriesTableTableManager(_db, _db.categories);
   $$MemosTableTableManager get memos =>
       $$MemosTableTableManager(_db, _db.memos);
-  $$GenUiCachesTableTableManager get genUiCaches =>
-      $$GenUiCachesTableTableManager(_db, _db.genUiCaches);
 }

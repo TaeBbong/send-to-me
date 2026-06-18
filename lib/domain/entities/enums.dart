@@ -1,9 +1,6 @@
 /// The "personality" of a category. The classifier picks one when creating a
-/// new category, and the generative-UI layer uses it as a strong hint for how
-/// to lay out the room (checklist / reference list / timeline / plain).
-///
-/// Note: with real generative UI the final layout is decided by the model at
-/// runtime; [CategoryKind] only seeds the prompt and the room-list iconography.
+/// new category, and it selects the room's layout template (checklist /
+/// reference list / timeline / plain) — see `KindMemoLayout`.
 enum CategoryKind {
   todo,
   reference,

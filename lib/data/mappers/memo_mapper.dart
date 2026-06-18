@@ -15,8 +15,10 @@ extension MemoRowX on MemoRow {
     summary: summary,
     sourceUrl: sourceUrl,
     isDone: isDone,
+    doneAt: doneAt,
     dueAt: dueAt,
     classifiedAt: classifiedAt,
+    linkTitle: linkTitle,
   );
 }
 
@@ -30,7 +32,9 @@ extension MemoX on Memo {
     summary: Value(summary),
     sourceUrl: Value(sourceUrl),
     isDone: Value(isDone),
+    doneAt: Value(doneAt),
     dueAt: Value(dueAt),
     classifiedAt: Value(classifiedAt),
+    linkTitle: Value(linkTitle),
   );
 }

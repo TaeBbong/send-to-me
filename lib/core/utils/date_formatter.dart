@@ -5,9 +5,14 @@ abstract final class DateFormatter {
   static final DateFormat _time = DateFormat('a h:mm', 'ko');
   static final DateFormat _monthDay = DateFormat('M월 d일 (E)', 'ko');
   static final DateFormat _full = DateFormat('yyyy. M. d.', 'ko');
+  static final DateFormat _stamp = DateFormat('M월 d일 a h:mm', 'ko');
 
   /// "오후 3:20" style time, used under bubbles.
   static String time(DateTime dt) => _time.format(dt);
+
+  /// "6월 18일 오후 3:20" style — a compact absolute date+time, used for
+  /// TODO registered/completed timestamps.
+  static String stamp(DateTime dt) => _stamp.format(dt);
 
   /// Date header shown between groups of messages.
   static String dateHeader(DateTime dt) {

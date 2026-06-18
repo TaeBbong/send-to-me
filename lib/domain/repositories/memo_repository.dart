@@ -22,6 +22,11 @@ abstract interface class MemoRepository {
 
   Future<Result<void>> delete(String id);
 
-  /// Toggle the checklist state of a memo (todo categories).
+  /// Toggle the checklist state of a memo (todo categories). Stamps the
+  /// completion time when checked and clears it when unchecked.
   Future<Result<void>> setDone(String id, bool isDone);
+
+  /// Stores the page title fetched for a memo's link, without touching any
+  /// other field.
+  Future<Result<void>> updateLinkTitle(String id, String title);
 }

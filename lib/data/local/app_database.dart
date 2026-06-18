@@ -31,44 +31,34 @@ class Memos extends Table {
   TextColumn get summary => text().nullable()();
   TextColumn get sourceUrl => text().nullable()();
   BoolColumn get isDone => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get doneAt => dateTime().nullable()();
   DateTimeColumn get dueAt => dateTime().nullable()();
   DateTimeColumn get classifiedAt => dateTime().nullable()();
+  TextColumn get linkTitle => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
 }
 
-/// Caches the generative-UI output (raw A2UI text) per category so a room's
-/// AI-rendered layout is generated once and replayed on later visits instead of
-/// re-calling the LLM every time.
-@DataClassName('GenUiCacheRow')
-class GenUiCaches extends Table {
-  TextColumn get categoryId => text()();
-
-  /// The concatenated A2UI protocol text the model produced.
-  TextColumn get payload => text()();
-
-  /// Signature of the memo set the payload was built from, to detect staleness.
-  TextColumn get signature => text()();
-  DateTimeColumn get updatedAt => dateTime()();
-
-  @override
-  Set<Column> get primaryKey => {categoryId};
-}
-
-@DriftDatabase(tables: [Categories, Memos, GenUiCaches])
+@DriftDatabase(tables: [Categories, Memos])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
     : super(executor ?? driftDatabase(name: 'awesome_memo'));
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
-      if (from < 2) await m.createTable(genUiCaches);
+      // v3: TODO completion timestamp + fetched link title, and the now-removed
+      // generative-UI cache table is dropped.
+      if (from < 3) {
+        await m.addColumn(memos, memos.doneAt);
+        await m.addColumn(memos, memos.linkTitle);
+        await m.database.customStatement('DROP TABLE IF EXISTS gen_ui_caches');
+      }
     },
   );
 }

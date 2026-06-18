@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/app_providers.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/memo.dart';
-import '../category_detail/genui/genui_cache_repository.dart';
 
 /// All visible categories (chat rooms), most-recently-active first.
 final categoriesProvider = StreamProvider<List<Category>>(
@@ -39,9 +38,6 @@ class CategoryActions {
   Future<void> archive(String id) =>
       _ref.read(categoryRepositoryProvider).archive(id);
 
-  Future<void> delete(String id) async {
-    await _ref.read(categoryRepositoryProvider).delete(id);
-    // Drop the room's cached generative-UI render along with the category.
-    await _ref.read(genUiCacheRepositoryProvider).clear(id);
-  }
+  Future<void> delete(String id) =>
+      _ref.read(categoryRepositoryProvider).delete(id);
 }

@@ -11,10 +11,10 @@ import '../../memo_chat/memo_chat_providers.dart';
 
 /// Deterministic, per-[CategoryKind] rendering of a room's memos.
 ///
-/// This is the reliable backbone of requirement #5 ("different UI per category
-/// type"): a checklist for todos, summarized cards for references, a timeline
-/// for ideas, plain bubbles otherwise. The generative-UI layer renders on top
-/// of this when Firebase is configured, and falls back to it otherwise.
+/// This is the single source of truth for "different UI per category type":
+/// a checklist for todos, summarized cards for references, a timeline for
+/// ideas, plain bubbles otherwise. The kind is chosen once by the classifier,
+/// so the right template is picked the moment a category is created.
 class KindMemoLayout extends StatelessWidget {
   const KindMemoLayout({
     super.key,
@@ -72,14 +72,43 @@ class _TodoLayout extends ConsumerWidget {
                 color: memo.isDone ? context.appColors.textSecondary : null,
               ),
             ),
-            subtitle: memo.dueAt != null
-                ? Text('마감 ${DateFormatter.relative(memo.dueAt!)}')
-                : null,
+            subtitle: _TodoMeta(memo: memo),
           ),
         );
       },
     );
   }
+}
+
+/// Timestamps under a TODO item: when it was registered and, once checked,
+/// when it was completed — plus an optional due date.
+class _TodoMeta extends StatelessWidget {
+  const _TodoMeta({required this.memo});
+
+  final Memo memo;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.appColors;
+    final muted = context.textTheme.labelSmall?.copyWith(color: c.textSecondary);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 2),
+        Text('등록 ${DateFormatter.stamp(memo.createdAt)}', style: muted),
+        if (memo.isDone && memo.doneAt != null)
+          Text(
+            '완료 ${DateFormatter.stamp(memo.doneAt!)}',
+            style: context.textTheme.labelSmall?.copyWith(color: accentDone),
+          ),
+        if (memo.dueAt != null)
+          Text('마감 ${DateFormatter.relative(memo.dueAt!)}', style: muted),
+      ],
+    );
+  }
+
+  // A subtle "done" tint that reads as positive without importing the accent.
+  static const Color accentDone = Color(0xFF2E7D32);
 }
 
 // ----------------------------------------------------------- reference --------
@@ -100,7 +129,9 @@ class _ReferenceLayout extends StatelessWidget {
       itemBuilder: (context, index) {
         final memo = ordered[index];
         final url = memo.sourceUrl;
-        final title = url != null ? Uri.tryParse(url)?.host ?? url : memo.content;
+        final host = url != null ? Uri.tryParse(url)?.host : null;
+        // Prefer the fetched page title, then the host, then the raw text.
+        final title = memo.linkTitle ?? host ?? url ?? memo.content;
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -108,23 +139,41 @@ class _ReferenceLayout extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.bookmark_rounded, size: 16, color: accent),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Icon(Icons.bookmark_rounded, size: 16, color: accent),
+                    ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         title,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: context.textTheme.titleSmall,
                       ),
                     ),
                   ],
                 ),
+                if (host != null) ...[
+                  const SizedBox(height: 2),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 24),
+                    child: Text(
+                      host,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: context.appColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
                 if (memo.summary != null) ...[
                   const SizedBox(height: AppSpacing.sm),
                   Text(memo.summary!, style: context.textTheme.bodyMedium),
-                ] else ...[
+                ] else if (url == null) ...[
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     memo.content,

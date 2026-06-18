@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/providers/app_providers.dart';
+import '../../core/utils/link_metadata.dart';
 import '../../core/utils/url_detector.dart';
 import '../../domain/entities/enums.dart';
 import '../../domain/entities/memo.dart';
@@ -54,6 +55,7 @@ class MemoActions {
     if (content.isEmpty) return;
 
     final now = DateTime.now();
+    final sourceUrl = UrlDetector.firstUrl(content);
     final memo = Memo(
       id: _uuid.v4(),
       content: content,
@@ -61,9 +63,21 @@ class MemoActions {
       createdAt: now,
       categoryId: categoryId,
       classifiedAt: now,
-      sourceUrl: UrlDetector.firstUrl(content),
+      sourceUrl: sourceUrl,
     );
     await _ref.read(memoRepositoryProvider).add(memo);
+
+    // Direct-to-room memos skip classification, so fetch the link title here.
+    if (sourceUrl != null) {
+      unawaited(_fetchLinkTitle(memo.id, sourceUrl));
+    }
+  }
+
+  Future<void> _fetchLinkTitle(String memoId, String url) async {
+    final title = await _ref.read(linkMetadataServiceProvider).fetchTitle(url);
+    if (title != null && title.isNotEmpty) {
+      await _ref.read(memoRepositoryProvider).updateLinkTitle(memoId, title);
+    }
   }
 
   Future<void> retry(Memo memo) async {

@@ -58,9 +58,6 @@ class ClassificationService {
       'dueAt': Schema.string(
         description: 'An ISO-8601 due date/time if the memo mentions one.',
       ),
-      'reasoning': Schema.string(
-        description: 'A brief rationale for the decision.',
-      ),
     },
     optionalProperties: [
       'matchedCategoryId',
@@ -72,7 +69,6 @@ class ClassificationService {
       'sourceUrl',
       'isDone',
       'dueAt',
-      'reasoning',
     ],
   );
 
@@ -106,8 +102,22 @@ Rules:
         responseMimeType: 'application/json',
         responseSchema: _responseSchema,
         temperature: 0.2,
+        // Classification is a simple, low-reasoning task. Minimizing "thinking"
+        // is the single biggest latency win on flash models — Gemini 3.x uses
+        // thinking levels, 2.5 and earlier use a numeric budget.
+        thinkingConfig: _minimalThinking(modelName),
       ),
     );
+  }
+
+  /// Returns the lowest-latency thinking setting valid for [modelName], or null
+  /// to leave the model default (Pro models can't fully disable thinking).
+  ThinkingConfig? _minimalThinking(String modelName) {
+    if (modelName.contains('pro')) return null;
+    final isGemini3OrNewer = RegExp(r'gemini-([3-9]|\d{2,})').hasMatch(modelName);
+    return isGemini3OrNewer
+        ? ThinkingConfig.withThinkingLevel(ThinkingLevel.minimal)
+        : ThinkingConfig.withThinkingBudget(0);
   }
 
   String _buildPrompt({

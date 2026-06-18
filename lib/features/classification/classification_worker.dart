@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/error/result.dart';
 import '../../core/firebase/firebase_status.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/utils/link_metadata.dart';
 import '../../core/utils/url_detector.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/classification_result.dart';
@@ -91,22 +94,38 @@ class ClassificationWorker {
       now: now,
     );
 
+    final sourceUrl = result.sourceUrl ?? UrlDetector.firstUrl(memo.content);
+
     await memoRepo.update(
       memo.copyWith(
         status: MemoStatus.classified,
         categoryId: categoryId,
         summary: result.summary,
-        sourceUrl: result.sourceUrl ?? UrlDetector.firstUrl(memo.content),
+        sourceUrl: sourceUrl,
         isDone: result.isDone,
         dueAt: result.dueAt,
         classifiedAt: now,
       ),
     );
 
+    // Best-effort, non-blocking: fetch the page title so reference cards show
+    // what the link is. The room updates reactively when it arrives.
+    if (sourceUrl != null && memo.linkTitle == null) {
+      unawaited(_fetchLinkTitle(memo.id, sourceUrl));
+    }
+
     // Bump the category so its "room" floats to the top of the list.
     final cat = (await categoryRepo.getById(categoryId)).valueOrNull;
     if (cat != null) {
       await categoryRepo.update(cat.copyWith(updatedAt: now));
+    }
+  }
+
+  /// Fetches and stores the link title for a classified memo, ignoring errors.
+  Future<void> _fetchLinkTitle(String memoId, String url) async {
+    final title = await _ref.read(linkMetadataServiceProvider).fetchTitle(url);
+    if (title != null && title.isNotEmpty) {
+      await _ref.read(memoRepositoryProvider).updateLinkTitle(memoId, title);
     }
   }
 

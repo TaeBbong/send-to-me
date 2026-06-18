@@ -87,11 +87,26 @@ class MemoRepositoryImpl implements MemoRepository {
   Future<Result<void>> setDone(String id, bool isDone) async {
     try {
       await (_db.update(_db.memos)..where((t) => t.id.equals(id))).write(
-        MemosCompanion(isDone: Value(isDone)),
+        MemosCompanion(
+          isDone: Value(isDone),
+          doneAt: Value(isDone ? DateTime.now() : null),
+        ),
       );
       return const Result.ok(null);
     } catch (e) {
       return Result.err(StorageFailure('완료 상태 변경 실패', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<void>> updateLinkTitle(String id, String title) async {
+    try {
+      await (_db.update(_db.memos)..where((t) => t.id.equals(id))).write(
+        MemosCompanion(linkTitle: Value(title)),
+      );
+      return const Result.ok(null);
+    } catch (e) {
+      return Result.err(StorageFailure('링크 제목 저장 실패', cause: e));
     }
   }
 }
