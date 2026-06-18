@@ -6,6 +6,7 @@ import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/url_detector.dart';
 import '../../../domain/entities/enums.dart';
 import '../../../domain/entities/memo.dart';
 import '../../categories/category_providers.dart';
@@ -25,7 +26,7 @@ class MemoBubble extends ConsumerWidget {
       outgoing: true,
       onLongPress: () => _confirmDelete(context, ref),
       footer: _Footer(memo),
-      child: Text(memo.content),
+      child: Text(UrlDetector.decodeInText(memo.content)),
     );
   }
 

@@ -22,6 +22,21 @@ abstract final class UrlDetector {
     return match?.group(0);
   }
 
+  /// Returns [text] with every embedded URL percent-decoded for display, so a
+  /// Korean link reads naturally in a chat bubble. The scheme and structure are
+  /// preserved; only the encoding is unescaped. The original (encoded) text
+  /// should still be used for launching/fetching.
+  static String decodeInText(String text) {
+    return text.replaceAllMapped(_urlRegExp, (m) {
+      final url = m.group(0)!;
+      try {
+        return Uri.decodeFull(url);
+      } catch (_) {
+        return url;
+      }
+    });
+  }
+
   /// A human-readable rendering of [url] for when no page title is available:
   /// drops the scheme, percent-decodes the path (so Korean/escaped slugs read
   /// naturally), and trims a trailing slash. Falls back to [url] on parse

@@ -40,43 +40,65 @@ class KindMemoLayout extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------- todo --------
-class _TodoLayout extends ConsumerWidget {
+/// Checklist with completed items grouped on top and pending ones below,
+/// separated by a divider; each group is oldest-first. Toggling an item
+/// re-sorts the list on the next build.
+class _TodoLayout extends StatelessWidget {
   const _TodoLayout({required this.memos, required this.accent});
 
   final List<Memo> memos;
   final Color accent;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final sorted = [...memos]
-      ..sort((a, b) {
-        if (a.isDone != b.isDone) return a.isDone ? 1 : -1;
-        return a.createdAt.compareTo(b.createdAt);
-      });
-    return ListView.separated(
+  Widget build(BuildContext context) {
+    int byAge(Memo a, Memo b) => a.createdAt.compareTo(b.createdAt);
+    final done = memos.where((m) => m.isDone).toList()..sort(byAge);
+    final pending = memos.where((m) => !m.isDone).toList()..sort(byAge);
+
+    Widget tile(Memo m) => Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+      child: _TodoTile(key: ValueKey(m.id), memo: m, accent: accent),
+    );
+
+    return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
-      itemCount: sorted.length,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.xs),
-      itemBuilder: (context, index) {
-        final memo = sorted[index];
-        return Card(
-          child: CheckboxListTile(
-            value: memo.isDone,
-            activeColor: accent,
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (v) =>
-                ref.read(memoActionsProvider).setDone(memo.id, v ?? false),
-            title: Text(
-              memo.content,
-              style: context.textTheme.bodyLarge?.copyWith(
-                decoration: memo.isDone ? TextDecoration.lineThrough : null,
-                color: memo.isDone ? context.appColors.textSecondary : null,
-              ),
-            ),
-            subtitle: _TodoMeta(memo: memo),
+      children: [
+        for (final m in done) tile(m),
+        if (done.isNotEmpty && pending.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: Divider(height: 1, color: context.appColors.divider),
           ),
-        );
-      },
+        for (final m in pending) tile(m),
+      ],
+    );
+  }
+}
+
+class _TodoTile extends ConsumerWidget {
+  const _TodoTile({super.key, required this.memo, required this.accent});
+
+  final Memo memo;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: CheckboxListTile(
+        value: memo.isDone,
+        activeColor: accent,
+        controlAffinity: ListTileControlAffinity.leading,
+        onChanged: (v) =>
+            ref.read(memoActionsProvider).setDone(memo.id, v ?? false),
+        title: Text(
+          memo.content,
+          style: context.textTheme.bodyLarge?.copyWith(
+            decoration: memo.isDone ? TextDecoration.lineThrough : null,
+            color: memo.isDone ? context.appColors.textSecondary : null,
+          ),
+        ),
+        subtitle: _TodoMeta(memo: memo),
+      ),
     );
   }
 }
