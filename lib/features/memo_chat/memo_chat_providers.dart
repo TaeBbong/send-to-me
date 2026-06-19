@@ -92,4 +92,23 @@ class MemoActions {
 
   Future<void> setDone(String id, bool isDone) =>
       _ref.read(memoRepositoryProvider).setDone(id, isDone);
+
+  /// Manually re-files a memo into [categoryId] (fixing a misclassification or
+  /// emptying the draft bucket). Bumps the target category to the top.
+  Future<void> moveToCategory(Memo memo, String categoryId) async {
+    if (memo.categoryId == categoryId) return;
+    final now = DateTime.now();
+    await _ref.read(memoRepositoryProvider).update(
+      memo.copyWith(
+        categoryId: categoryId,
+        status: MemoStatus.classified,
+        classifiedAt: memo.classifiedAt ?? now,
+      ),
+    );
+    final categoryRepo = _ref.read(categoryRepositoryProvider);
+    final category = (await categoryRepo.getById(categoryId)).valueOrNull;
+    if (category != null) {
+      await categoryRepo.update(category.copyWith(updatedAt: now));
+    }
+  }
 }

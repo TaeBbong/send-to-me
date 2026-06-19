@@ -9,6 +9,7 @@ import '../../../core/utils/url_detector.dart';
 import '../../../domain/entities/enums.dart';
 import '../../../domain/entities/memo.dart';
 import '../../memo_chat/memo_chat_providers.dart';
+import '../../memo_chat/widgets/memo_actions_sheet.dart';
 
 /// Deterministic, per-[CategoryKind] rendering of a room's memos.
 ///
@@ -37,6 +38,14 @@ class KindMemoLayout extends StatelessWidget {
       CategoryKind.note => _NoteLayout(memos: memos),
     };
   }
+}
+
+/// Wraps a memo tile so a long-press opens the move-to-category / delete sheet.
+Widget _withMemoActions(BuildContext context, Memo memo, Widget child) {
+  return GestureDetector(
+    onLongPress: () => showMemoActionsSheet(context, memo),
+    child: child,
+  );
 }
 
 // ---------------------------------------------------------------- todo --------
@@ -83,21 +92,25 @@ class _TodoTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      child: CheckboxListTile(
-        value: memo.isDone,
-        activeColor: accent,
-        controlAffinity: ListTileControlAffinity.leading,
-        onChanged: (v) =>
-            ref.read(memoActionsProvider).setDone(memo.id, v ?? false),
-        title: Text(
-          memo.content,
-          style: context.textTheme.bodyLarge?.copyWith(
-            decoration: memo.isDone ? TextDecoration.lineThrough : null,
-            color: memo.isDone ? context.appColors.textSecondary : null,
+    return _withMemoActions(
+      context,
+      memo,
+      Card(
+        child: CheckboxListTile(
+          value: memo.isDone,
+          activeColor: accent,
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: (v) =>
+              ref.read(memoActionsProvider).setDone(memo.id, v ?? false),
+          title: Text(
+            memo.content,
+            style: context.textTheme.bodyLarge?.copyWith(
+              decoration: memo.isDone ? TextDecoration.lineThrough : null,
+              color: memo.isDone ? context.appColors.textSecondary : null,
+            ),
           ),
+          subtitle: _TodoMeta(memo: memo),
         ),
-        subtitle: _TodoMeta(memo: memo),
       ),
     );
   }
@@ -157,9 +170,12 @@ class _ReferenceLayout extends StatelessWidget {
         // carries the full decoded link below it.
         final title = memo.linkTitle ?? host ?? url ?? memo.content;
         final subtitleUrl = url == null ? null : UrlDetector.pretty(url);
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+        return _withMemoActions(
+          context,
+          memo,
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -225,7 +241,7 @@ class _ReferenceLayout extends StatelessWidget {
               ],
             ),
           ),
-        );
+        ));
       },
     );
   }
@@ -290,12 +306,16 @@ class _TimelineLayout extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppSpacing.md),
-                          child: Text(
-                            memo.content,
-                            style: context.textTheme.bodyLarge,
+                      _withMemoActions(
+                        context,
+                        memo,
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSpacing.md),
+                            child: Text(
+                              memo.content,
+                              style: context.textTheme.bodyLarge,
+                            ),
                           ),
                         ),
                       ),
@@ -326,21 +346,25 @@ class _NoteLayout extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, index) {
         final memo = memos[index];
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(memo.content, style: context.textTheme.bodyLarge),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  DateFormatter.relative(memo.createdAt),
-                  style: context.textTheme.labelSmall?.copyWith(
-                    color: c.textSecondary,
+        return _withMemoActions(
+          context,
+          memo,
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(memo.content, style: context.textTheme.bodyLarge),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    DateFormatter.relative(memo.createdAt),
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: c.textSecondary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
