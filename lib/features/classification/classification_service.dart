@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_ai/firebase_ai.dart';
@@ -182,6 +183,8 @@ Rules:
         return const Result.err(LlmFailure('LLM 응답 형식이 올바르지 않아요.'));
       }
       return Result.ok(ClassificationResult.fromJson(decoded));
+    } on TimeoutException {
+      return const Result.err(LlmFailure('분류 시간이 초과됐어요. 다시 시도해 주세요.'));
     } on FormatException catch (e) {
       return Result.err(LlmFailure('LLM 응답 파싱 실패', cause: e));
     } on FirebaseException catch (e) {
@@ -191,19 +194,22 @@ Rules:
     }
   }
 
-  /// Tries the primary model, then [AppConstants.fallbackModel] once.
+  /// Tries the primary model, then [AppConstants.fallbackModel] once. Each
+  /// attempt is bounded by [AppConstants.classifyTimeout]; a timeout fails fast
+  /// (no fallback) so the memo can be retried instead of hanging.
   Future<String?> _generateWithFallback(String modelName, String prompt) async {
+    Future<String?> run(String model) => _model(model)
+        .generateContent([Content.text(prompt)])
+        .timeout(AppConstants.classifyTimeout)
+        .then((resp) => resp.text);
+
     try {
-      final resp = await _model(modelName).generateContent([
-        Content.text(prompt),
-      ]);
-      return resp.text;
+      return await run(modelName);
+    } on TimeoutException {
+      rethrow;
     } catch (_) {
       if (modelName == AppConstants.fallbackModel) rethrow;
-      final resp = await _model(AppConstants.fallbackModel).generateContent([
-        Content.text(prompt),
-      ]);
-      return resp.text;
+      return await run(AppConstants.fallbackModel);
     }
   }
 }

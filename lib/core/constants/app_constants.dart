@@ -3,29 +3,35 @@ abstract final class AppConstants {
   static const String appName = 'Awesome Memo';
   static const String appTagline = '생각나면 톡, 정리는 AI가.';
 
-  /// Default Gemini model and its fallback, used by the classification and
-  /// generative-UI services. Both are overridable from Settings.
+  /// Default Gemini model and its fallback, used by the classification service.
+  /// Both are overridable from Settings.
   ///
-  /// `gemini-3.5-flash` is the current no-cost-tier flash model on Firebase
-  /// AI Logic; `gemini-2.5-flash` is the safe fallback if the primary is not
-  /// available for a given project/region.
-  static const String defaultModel = 'gemini-3.5-flash';
+  /// `gemini-2.5-flash-lite` is the fastest/cheapest model — classification is a
+  /// lightweight task, so the lite model keeps latency low. `gemini-2.5-flash`
+  /// is the safe fallback if the primary errors for a given project/region.
+  static const String defaultModel = 'gemini-2.5-flash-lite';
   static const String fallbackModel = 'gemini-2.5-flash';
 
-  /// Selectable models surfaced in Settings. `gemini-2.5-flash-lite` is the
-  /// fastest/cheapest option — a good fit for the lightweight classification
-  /// task if `flash` feels slow.
+  /// How long a single classification LLM call may run before we give up and
+  /// mark the memo failed. The lite model normally answers in a few seconds;
+  /// this generous ceiling only catches calls that are truly stuck (e.g. a slow
+  /// or flaky network) so they don't fail prematurely.
+  static const Duration classifyTimeout = Duration(minutes: 1);
+
+  /// Max number of memos classified concurrently when several are pending.
+  static const int classifyConcurrency = 4;
+
+  /// Selectable models surfaced in Settings, lightest first.
   static const List<String> selectableModels = [
-    'gemini-3.5-flash',
-    'gemini-2.5-flash',
     'gemini-2.5-flash-lite',
+    'gemini-2.5-flash',
     'gemini-2.5-pro',
   ];
 
   /// Developer / about info.
-  static const String developerName = 'Awesome Memo Team';
-  static const String developerEmail = 'research.dev33@proton.me';
-  static const String repositoryUrl = 'https://github.com/';
+  static const String developerName = 'TaeBbong';
+  static const String developerEmail = 'mok05289@korea.ac.kr';
+  static const String repositoryUrl = 'https://github.com/TaeBbong/send-to-me';
   static const String appVersion = '0.1.0';
 }
 

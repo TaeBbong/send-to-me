@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/constants/app_constants.dart';
 import '../../core/error/result.dart';
 import '../../core/firebase/firebase_status.dart';
 import '../../core/providers/app_providers.dart';
@@ -29,8 +30,14 @@ class ClassificationWorker {
   final Ref _ref;
   bool _running = false;
 
-  /// Process every memo currently in the pending/processing state. Safe to call
-  /// repeatedly; concurrent runs are coalesced.
+  /// Serializes the (fast) category create/dedup section so that memos being
+  /// classified in parallel never create duplicate categories.
+  Future<void> _categoryGate = Future<void>.value();
+
+  /// Drains every pending memo, classifying up to
+  /// [AppConstants.classifyConcurrency] at a time. Safe to call repeatedly;
+  /// overlapping runs are coalesced, and memos added mid-run are picked up by
+  /// the drain loop.
   Future<void> processPending() async {
     if (_running) return;
     if (!_ref.read(firebaseReadyProvider)) return;
@@ -38,42 +45,70 @@ class ClassificationWorker {
 
     _running = true;
     try {
-      final pending =
-          (await _ref.read(memoRepositoryProvider).getPending()).valueOrNull ??
-          const [];
-      for (final memo in pending) {
-        await _process(memo);
+      final repo = _ref.read(memoRepositoryProvider);
+      while (true) {
+        final pending = (await repo.getPending()).valueOrNull ?? const <Memo>[];
+        if (pending.isEmpty) break;
+        await _processConcurrently(pending);
       }
     } finally {
       _running = false;
     }
   }
 
+  /// Runs [_process] over [memos] with a bounded number of concurrent workers.
+  Future<void> _processConcurrently(List<Memo> memos) async {
+    final queue = [...memos];
+    final workerCount = AppConstants.classifyConcurrency.clamp(1, memos.length);
+
+    Future<void> drain() async {
+      while (queue.isNotEmpty) {
+        await _process(queue.removeAt(0));
+      }
+    }
+
+    await Future.wait([for (var i = 0; i < workerCount; i++) drain()]);
+  }
+
   Future<void> _process(Memo memo) async {
     final memoRepo = _ref.read(memoRepositoryProvider);
-    final categoryRepo = _ref.read(categoryRepositoryProvider);
-    final service = _ref.read(classificationServiceProvider);
-    final settings = _ref.read(settingsControllerProvider);
+    try {
+      final categoryRepo = _ref.read(categoryRepositoryProvider);
+      final service = _ref.read(classificationServiceProvider);
+      final settings = _ref.read(settingsControllerProvider);
 
-    await memoRepo.update(memo.copyWith(status: MemoStatus.processing));
+      await memoRepo.update(memo.copyWith(status: MemoStatus.processing));
 
-    final categories =
-        (await categoryRepo.getAll()).valueOrNull ?? const <Category>[];
+      final categories =
+          (await categoryRepo.getAll()).valueOrNull ?? const <Category>[];
 
-    final result = await service.classify(
-      content: memo.content,
-      existing: categories,
-      modelName: settings.geminiModel,
-      allowNewCategory: settings.autoCreateCategory,
-      generateSummary: settings.generateSummaries,
-    );
+      final result = await service.classify(
+        content: memo.content,
+        existing: categories,
+        modelName: settings.geminiModel,
+        allowNewCategory: settings.autoCreateCategory,
+        generateSummary: settings.generateSummaries,
+      );
 
-    switch (result) {
-      case Ok(value: final classification):
-        await _apply(memo, classification, categories);
-      case Err():
-        await memoRepo.update(memo.copyWith(status: MemoStatus.failed));
+      switch (result) {
+        case Ok(value: final classification):
+          await _apply(memo, classification, categories);
+        case Err():
+          await memoRepo.update(memo.copyWith(status: MemoStatus.failed));
+      }
+    } catch (_) {
+      // Never leave a memo stuck in `processing` — that would loop forever.
+      await memoRepo.update(memo.copyWith(status: MemoStatus.failed));
     }
+  }
+
+  /// Runs [action] after any in-flight category creation completes, so creates
+  /// happen one at a time (each sees the previous one's result).
+  Future<T> _serializeCategory<T>(Future<T> Function() action) {
+    final previous = _categoryGate;
+    final completer = Completer<void>();
+    _categoryGate = completer.future;
+    return previous.then((_) => action()).whenComplete(completer.complete);
   }
 
   Future<void> _apply(
@@ -133,7 +168,8 @@ class ClassificationWorker {
   }
 
   /// Returns the id of the category the memo should land in, creating a new
-  /// category when appropriate.
+  /// category when appropriate. The create/dedup path is serialized so parallel
+  /// classification can't spawn duplicate categories.
   Future<String> _resolveCategory({
     required Memo memo,
     required ClassificationResult result,
@@ -142,28 +178,43 @@ class ClassificationWorker {
     required DateTime now,
   }) async {
     final matchedId = result.matchedCategoryId;
-    final hasValidMatch =
-        matchedId != null && categories.any((c) => c.id == matchedId);
-    if (hasValidMatch) return matchedId;
-
-    // New category needed. We always bootstrap the first category even when
-    // auto-create is off (a memo must live somewhere); otherwise, with the
-    // toggle off, fall back to the most recently used existing room.
-    if (!allowCreate && categories.isNotEmpty) {
-      return categories.first.id;
+    if (matchedId != null && categories.any((c) => c.id == matchedId)) {
+      return matchedId;
     }
 
-    final kind = result.newCategoryKind ?? CategoryKind.note;
-    final category = Category(
-      id: _uuid.v4(),
-      name: result.newCategoryName ?? kind.label,
-      emoji: result.newCategoryEmoji ?? kind.defaultEmoji,
-      kind: kind,
-      description: result.newCategoryDescription ?? memo.content,
-      createdAt: now,
-      updatedAt: now,
-    );
-    await _ref.read(categoryRepositoryProvider).add(category);
-    return category.id;
+    return _serializeCategory(() async {
+      final categoryRepo = _ref.read(categoryRepositoryProvider);
+      // Re-read fresh: a sibling memo may have just created the category.
+      final fresh = (await categoryRepo.getAll()).valueOrNull ?? categories;
+
+      if (matchedId != null && fresh.any((c) => c.id == matchedId)) {
+        return matchedId;
+      }
+
+      // With auto-create off, drop into the most recent existing room (but still
+      // bootstrap the very first category — a memo must live somewhere).
+      if (!allowCreate && fresh.isNotEmpty) return fresh.first.id;
+
+      final kind = result.newCategoryKind ?? CategoryKind.note;
+      final name = result.newCategoryName ?? kind.label;
+
+      // Reuse an existing same-named category instead of duplicating it.
+      final normalized = name.trim().toLowerCase();
+      for (final c in fresh) {
+        if (c.name.trim().toLowerCase() == normalized) return c.id;
+      }
+
+      final category = Category(
+        id: _uuid.v4(),
+        name: name,
+        emoji: result.newCategoryEmoji ?? kind.defaultEmoji,
+        kind: kind,
+        description: result.newCategoryDescription ?? memo.content,
+        createdAt: now,
+        updatedAt: now,
+      );
+      await categoryRepo.add(category);
+      return category.id;
+    });
   }
 }
