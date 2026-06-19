@@ -12,14 +12,21 @@ abstract final class AppConstants {
   static const String defaultModel = 'gemini-2.5-flash-lite';
   static const String fallbackModel = 'gemini-2.5-flash';
 
-  /// How long a single classification LLM call may run before we give up and
-  /// mark the memo failed. The lite model normally answers in a few seconds;
-  /// this generous ceiling only catches calls that are truly stuck (e.g. a slow
-  /// or flaky network) so they don't fail prematurely.
-  static const Duration classifyTimeout = Duration(minutes: 1);
+  /// How long a single classification LLM call may run before we abort it. The
+  /// lite model normally answers in ~2s; a request still pending well past that
+  /// is usually a dead idle keep-alive socket (mobile NAT drops it after a few
+  /// minutes), so we cut it early and retry on a fresh connection.
+  static const Duration classifyTimeout = Duration(seconds: 10);
 
   /// Max number of memos classified concurrently when several are pending.
   static const int classifyConcurrency = 4;
+
+  /// Fallback "draft" category (note kind). When classification fails or times
+  /// out, the memo is filed here instead of being marked failed — no retry, it
+  /// just lands somewhere the user can find it.
+  static const String draftCategoryId = 'draft';
+  static const String draftCategoryName = '미분류';
+  static const String draftCategoryEmoji = '🗂️';
 
   /// Selectable models surfaced in Settings, lightest first.
   static const List<String> selectableModels = [

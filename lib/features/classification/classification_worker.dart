@@ -94,12 +94,61 @@ class ClassificationWorker {
         case Ok(value: final classification):
           await _apply(memo, classification, categories);
         case Err():
-          await memoRepo.update(memo.copyWith(status: MemoStatus.failed));
+          // Timed out or errored → file it in the draft bucket, no retry.
+          await _assignToDraft(memo);
       }
     } catch (_) {
       // Never leave a memo stuck in `processing` — that would loop forever.
-      await memoRepo.update(memo.copyWith(status: MemoStatus.failed));
+      try {
+        await _assignToDraft(memo);
+      } catch (_) {
+        await memoRepo.update(memo.copyWith(status: MemoStatus.failed));
+      }
     }
+  }
+
+  /// Files [memo] into the fallback "draft" category (created on demand) and
+  /// marks it classified, so a failed/timed-out memo still lands somewhere.
+  Future<void> _assignToDraft(Memo memo) async {
+    final memoRepo = _ref.read(memoRepositoryProvider);
+    final categoryRepo = _ref.read(categoryRepositoryProvider);
+    final now = DateTime.now();
+
+    final categoryId = await _ensureDraftCategory(now);
+    await memoRepo.update(
+      memo.copyWith(
+        status: MemoStatus.classified,
+        categoryId: categoryId,
+        classifiedAt: now,
+      ),
+    );
+
+    final cat = (await categoryRepo.getById(categoryId)).valueOrNull;
+    if (cat != null) {
+      await categoryRepo.update(cat.copyWith(updatedAt: now));
+    }
+  }
+
+  /// Returns the draft category id, creating the singleton category if missing.
+  Future<String> _ensureDraftCategory(DateTime now) {
+    return _serializeCategory(() async {
+      final categoryRepo = _ref.read(categoryRepositoryProvider);
+      final existing =
+          (await categoryRepo.getById(AppConstants.draftCategoryId)).valueOrNull;
+      if (existing != null) return existing.id;
+
+      final category = Category(
+        id: AppConstants.draftCategoryId,
+        name: AppConstants.draftCategoryName,
+        emoji: AppConstants.draftCategoryEmoji,
+        kind: CategoryKind.note,
+        description: '분류에 실패했거나 시간이 초과된 메모가 모이는 임시 보관함',
+        createdAt: now,
+        updatedAt: now,
+      );
+      await categoryRepo.add(category);
+      return category.id;
+    });
   }
 
   /// Runs [action] after any in-flight category creation completes, so creates
