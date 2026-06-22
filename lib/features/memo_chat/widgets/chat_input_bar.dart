@@ -7,10 +7,19 @@ import '../../../core/theme/theme_extensions.dart';
 /// The bottom "나에게 보내기" composer: a rounded multiline field plus a send
 /// button. Manages its own [TextEditingController] and clears on send.
 class ChatInputBar extends StatefulWidget {
-  const ChatInputBar({super.key, required this.onSend, this.hintText});
+  const ChatInputBar({
+    super.key,
+    required this.onSend,
+    this.hintText,
+    this.offerClipboard = false,
+  });
 
   final ValueChanged<String> onSend;
   final String? hintText;
+
+  /// Whether to offer a one-tap "paste what you copied" suggestion. Only the
+  /// main capture chat enables this; category rooms don't.
+  final bool offerClipboard;
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -25,9 +34,10 @@ class _ChatInputBarState extends State<ChatInputBar>
   /// Clipboard text offered as a one-tap paste, or null when nothing is offered.
   String? _clipboardSuggestion;
 
-  /// Last clipboard text the user explicitly dismissed, so we don't nag again
-  /// until the clipboard contents change.
-  String? _dismissed;
+  /// Clipboard text we should NOT offer again — set when the user dismisses the
+  /// chip OR accepts the paste — until the clipboard contents change to
+  /// something else.
+  String? _suppressed;
 
   @override
   void initState() {
@@ -41,7 +51,9 @@ class _ChatInputBarState extends State<ChatInputBar>
         setState(() => _clipboardSuggestion = null);
       }
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeOfferPaste());
+    if (widget.offerClipboard) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _maybeOfferPaste());
+    }
   }
 
   @override
@@ -54,6 +66,7 @@ class _ChatInputBarState extends State<ChatInputBar>
   /// Offers a clipboard paste only when the field is empty. Uses [hasStrings]
   /// (which does NOT trip iOS's "pasted from…" banner) to gate the actual read.
   Future<void> _maybeOfferPaste() async {
+    if (!widget.offerClipboard) return;
     if (_controller.text.trim().isNotEmpty) return;
     if (!await Clipboard.hasStrings()) {
       if (mounted && _clipboardSuggestion != null) {
@@ -64,7 +77,7 @@ class _ChatInputBarState extends State<ChatInputBar>
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     final text = data?.text?.trim();
     if (!mounted) return;
-    if (text == null || text.isEmpty || text == _dismissed) return;
+    if (text == null || text.isEmpty || text == _suppressed) return;
     if (text == _clipboardSuggestion) return;
     setState(() => _clipboardSuggestion = text);
   }
@@ -74,13 +87,17 @@ class _ChatInputBarState extends State<ChatInputBar>
     if (text == null) return;
     _controller.text = text;
     _controller.selection = TextSelection.collapsed(offset: text.length);
-    setState(() => _clipboardSuggestion = null);
+    setState(() {
+      // Don't re-offer what was just pasted until the clipboard changes.
+      _suppressed = text;
+      _clipboardSuggestion = null;
+    });
     _focusNode.requestFocus();
   }
 
   void _dismissPaste() {
     setState(() {
-      _dismissed = _clipboardSuggestion;
+      _suppressed = _clipboardSuggestion;
       _clipboardSuggestion = null;
     });
   }

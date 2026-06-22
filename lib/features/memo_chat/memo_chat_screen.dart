@@ -22,14 +22,41 @@ class MemoChatScreen extends ConsumerStatefulWidget {
   ConsumerState<MemoChatScreen> createState() => _MemoChatScreenState();
 }
 
-class _MemoChatScreenState extends ConsumerState<MemoChatScreen> {
+class _MemoChatScreenState extends ConsumerState<MemoChatScreen>
+    with WidgetsBindingObserver {
   final _scrollController = ScrollController();
   int _lastCount = 0;
 
+  /// Whether the list was at (or near) the bottom — tracked so the keyboard only
+  /// pulls the latest memo up when the user wasn't reading older ones.
+  bool _atBottom = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _scrollController.addListener(_onScroll);
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    _atBottom = pos.pixels >= pos.maxScrollExtent - 80;
+  }
+
+  @override
+  void didChangeMetrics() {
+    // Keyboard opening changes the bottom inset. Only follow it to the bottom
+    // when the user was already there — if they scrolled up to read an older
+    // memo, leave their position alone.
+    if (_atBottom) _scrollToBottomSoon();
   }
 
   void _scrollToBottomSoon() {
@@ -55,7 +82,10 @@ class _MemoChatScreenState extends ConsumerState<MemoChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: memosAsync.when(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: memosAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('메모를 불러오지 못했어요: $e')),
               data: (memos) {
@@ -84,10 +114,12 @@ class _MemoChatScreenState extends ConsumerState<MemoChatScreen> {
                   },
                 );
               },
+              ),
             ),
           ),
           ChatInputBar(
             hintText: AppConstants.appTagline,
+            offerClipboard: true,
             onSend: (text) => ref.read(memoActionsProvider).send(text),
           ),
         ],
