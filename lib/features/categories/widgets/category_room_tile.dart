@@ -24,7 +24,9 @@ class CategoryRoomTile extends ConsumerWidget {
     final memos = ref.watch(memosByCategoryProvider(category.id)).valueOrNull;
     final count = memos?.length ?? 0;
     final lastMemo = (memos == null || memos.isEmpty) ? null : memos.last;
-    final preview = lastMemo?.content ?? category.description;
+    // Show the latest memo as the preview; an empty room shows nothing rather
+    // than the (memo-seeded) category description.
+    final preview = lastMemo?.content ?? '비어 있음';
 
     return InkWell(
       onTap: () => context.push(AppRoutes.roomPath(category.id)),
