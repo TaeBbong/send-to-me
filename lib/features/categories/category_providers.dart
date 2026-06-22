@@ -1,8 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/providers/app_providers.dart';
 import '../../domain/entities/category.dart';
+import '../../domain/entities/enums.dart';
 import '../../domain/entities/memo.dart';
+
+const _uuid = Uuid();
 
 /// All visible categories (chat rooms), most-recently-active first.
 final categoriesProvider = StreamProvider<List<Category>>(
@@ -40,4 +44,27 @@ class CategoryActions {
 
   Future<void> delete(String id) =>
       _ref.read(categoryRepositoryProvider).delete(id);
+
+  /// Creates a category the user defined by hand. Falls back to the kind's
+  /// default emoji when none is supplied.
+  Future<Category> create({
+    required String name,
+    required CategoryKind kind,
+    String? emoji,
+    String? description,
+  }) async {
+    final now = DateTime.now();
+    final trimmedEmoji = emoji?.trim() ?? '';
+    final category = Category(
+      id: _uuid.v4(),
+      name: name.trim(),
+      emoji: trimmedEmoji.isEmpty ? kind.defaultEmoji : trimmedEmoji,
+      kind: kind,
+      description: description?.trim() ?? '',
+      createdAt: now,
+      updatedAt: now,
+    );
+    await _ref.read(categoryRepositoryProvider).add(category);
+    return category;
+  }
 }

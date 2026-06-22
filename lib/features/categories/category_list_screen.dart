@@ -5,6 +5,7 @@ import '../../core/theme/theme_extensions.dart';
 import '../../core/widgets/empty_state.dart';
 import 'category_providers.dart';
 import 'widgets/category_room_tile.dart';
+import 'widgets/create_category_sheet.dart';
 
 /// The messenger "chat room list" — one room per category. Rooms appear and
 /// reorder themselves as the classifier files memos away.
@@ -17,6 +18,11 @@ class CategoryListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('보관함')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showCreateCategorySheet(context),
+        tooltip: '새 카테고리',
+        child: const Icon(Icons.add),
+      ),
       body: categoriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('카테고리를 불러오지 못했어요: $e')),
