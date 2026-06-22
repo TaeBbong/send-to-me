@@ -54,6 +54,19 @@ class MemoRepositoryImpl implements MemoRepository {
   }
 
   @override
+  Future<Result<List<Memo>>> getByCategory(String categoryId) async {
+    try {
+      final query = _db.select(_db.memos)
+        ..where((t) => t.categoryId.equals(categoryId))
+        ..orderBy([(t) => OrderingTerm.asc(t.createdAt)]);
+      final rows = await query.get();
+      return Result.ok(rows.map((r) => r.toDomain()).toList());
+    } catch (e) {
+      return Result.err(StorageFailure('카테고리 메모 조회 실패', cause: e));
+    }
+  }
+
+  @override
   Future<Result<Memo>> add(Memo memo) async {
     try {
       await _db.into(_db.memos).insertOnConflictUpdate(memo.toCompanion());

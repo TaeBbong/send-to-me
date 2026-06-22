@@ -21,6 +21,10 @@ abstract final class AppConstants {
   /// Max number of memos classified concurrently when several are pending.
   static const int classifyConcurrency = 4;
 
+  /// While the app is in the foreground, draft memos are re-classified against
+  /// existing categories on this interval (unobtrusive background retry).
+  static const Duration autoReclassifyInterval = Duration(minutes: 5);
+
   /// Fallback "draft" category (note kind). When classification fails or times
   /// out, the memo is filed here instead of being marked failed — no retry, it
   /// just lands somewhere the user can find it.

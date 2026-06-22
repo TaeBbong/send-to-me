@@ -7,6 +7,8 @@ final classificationServiceProvider = Provider<ClassificationService>(
   (ref) => const ClassificationService(),
 );
 
-final classificationWorkerProvider = Provider<ClassificationWorker>(
-  (ref) => ClassificationWorker(ref),
-);
+final classificationWorkerProvider = Provider<ClassificationWorker>((ref) {
+  final worker = ClassificationWorker(ref);
+  ref.onDispose(worker.dispose);
+  return worker;
+});

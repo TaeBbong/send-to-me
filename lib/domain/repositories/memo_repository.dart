@@ -16,6 +16,9 @@ abstract interface class MemoRepository {
   /// One-shot read of all memos still needing classification.
   Future<Result<List<Memo>>> getPending();
 
+  /// One-shot read of all memos currently filed under [categoryId].
+  Future<Result<List<Memo>>> getByCategory(String categoryId);
+
   Future<Result<Memo>> add(Memo memo);
 
   Future<Result<void>> update(Memo memo);

@@ -15,6 +15,7 @@ import '../../domain/entities/enums.dart';
 import '../../domain/entities/memo.dart';
 import '../settings/settings_controller.dart';
 import 'classification_providers.dart';
+import 'reclassify_status.dart';
 
 const _uuid = Uuid();
 
@@ -29,10 +30,25 @@ class ClassificationWorker {
 
   final Ref _ref;
   bool _running = false;
+  Timer? _autoTimer;
 
   /// Serializes the (fast) category create/dedup section so that memos being
   /// classified in parallel never create duplicate categories.
   Future<void> _categoryGate = Future<void>.value();
+
+  /// Starts the unobtrusive periodic re-classification of draft memos while the
+  /// app is alive (see [reclassifyDrafts]). Idempotent.
+  void startAutoReclassify() {
+    _autoTimer ??= Timer.periodic(
+      AppConstants.autoReclassifyInterval,
+      (_) => unawaited(reclassifyDrafts()),
+    );
+  }
+
+  void dispose() {
+    _autoTimer?.cancel();
+    _autoTimer = null;
+  }
 
   /// Drains every pending memo, classifying up to
   /// [AppConstants.classifyConcurrency] at a time. Safe to call repeatedly;
@@ -49,25 +65,104 @@ class ClassificationWorker {
       while (true) {
         final pending = (await repo.getPending()).valueOrNull ?? const <Memo>[];
         if (pending.isEmpty) break;
-        await _processConcurrently(pending);
+        await _runConcurrently(pending, _process);
       }
     } finally {
       _running = false;
     }
   }
 
-  /// Runs [_process] over [memos] with a bounded number of concurrent workers.
-  Future<void> _processConcurrently(List<Memo> memos) async {
+  /// Re-classifies every memo currently in the draft bucket against the existing
+  /// (non-draft) categories, moving any that now have a good match. Runs several
+  /// at once; memos with no suitable match simply stay in draft. Match-only —
+  /// it never creates a new category.
+  Future<void> reclassifyDrafts() async {
+    if (_running) return;
+    if (!_ref.read(firebaseReadyProvider)) return;
+    if (!_ref.read(settingsControllerProvider).autoClassify) return;
+
+    _running = true;
+    final status = _ref.read(reclassifyStatusProvider.notifier);
+    try {
+      final drafts = (await _ref
+                  .read(memoRepositoryProvider)
+                  .getByCategory(AppConstants.draftCategoryId))
+              .valueOrNull ??
+          const <Memo>[];
+      if (drafts.isEmpty) return;
+      status.start(drafts.length);
+      await _runConcurrently(drafts, _reclassifyOne);
+    } finally {
+      status.complete();
+      _running = false;
+    }
+  }
+
+  /// Runs [action] over [memos] with a bounded number of concurrent workers.
+  Future<void> _runConcurrently(
+    List<Memo> memos,
+    Future<void> Function(Memo) action,
+  ) async {
     final queue = [...memos];
     final workerCount = AppConstants.classifyConcurrency.clamp(1, memos.length);
 
     Future<void> drain() async {
       while (queue.isNotEmpty) {
-        await _process(queue.removeAt(0));
+        await action(queue.removeAt(0));
       }
     }
 
     await Future.wait([for (var i = 0; i < workerCount; i++) drain()]);
+  }
+
+  /// Tries to move one draft memo into an existing category. Match-only: if
+  /// nothing fits (or on error) the memo is left in draft for the next pass.
+  Future<void> _reclassifyOne(Memo memo) async {
+    final status = _ref.read(reclassifyStatusProvider.notifier);
+    status.begin(memo.id);
+    var moved = false;
+    try {
+      final categoryRepo = _ref.read(categoryRepositoryProvider);
+      final service = _ref.read(classificationServiceProvider);
+      final settings = _ref.read(settingsControllerProvider);
+
+      final candidates =
+          ((await categoryRepo.getAll()).valueOrNull ?? const <Category>[])
+              .where((c) => c.id != AppConstants.draftCategoryId)
+              .toList();
+      if (candidates.isEmpty) return; // nothing to match against yet
+
+      final result = await service.classify(
+        content: memo.content,
+        existing: candidates,
+        modelName: settings.geminiModel,
+        allowNewCategory: false,
+        generateSummary: settings.generateSummaries,
+      );
+
+      if (result case Ok(value: final c)) {
+        final matchedId = c.matchedCategoryId;
+        if (matchedId != null && candidates.any((cat) => cat.id == matchedId)) {
+          final now = DateTime.now();
+          await _ref.read(memoRepositoryProvider).update(
+                memo.copyWith(
+                  categoryId: matchedId,
+                  status: MemoStatus.classified,
+                  classifiedAt: now,
+                ),
+              );
+          final cat = (await categoryRepo.getById(matchedId)).valueOrNull;
+          if (cat != null) {
+            await categoryRepo.update(cat.copyWith(updatedAt: now));
+          }
+          moved = true;
+        }
+      }
+    } catch (_) {
+      // Leave it in draft; the next pass will retry.
+    } finally {
+      status.finish(memo.id, moved: moved);
+    }
   }
 
   Future<void> _process(Memo memo) async {
@@ -79,8 +174,12 @@ class ClassificationWorker {
 
       await memoRepo.update(memo.copyWith(status: MemoStatus.processing));
 
+      // The draft bucket is a system fallback, not a semantic target — never
+      // offer it to the classifier as a match candidate.
       final categories =
-          (await categoryRepo.getAll()).valueOrNull ?? const <Category>[];
+          ((await categoryRepo.getAll()).valueOrNull ?? const <Category>[])
+              .where((c) => c.id != AppConstants.draftCategoryId)
+              .toList();
 
       final result = await service.classify(
         content: memo.content,

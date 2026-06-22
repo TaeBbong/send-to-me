@@ -26,6 +26,8 @@ Future<void> main() async {
   );
 
   // Resume classification for any memos left pending from a previous run.
+  // (Periodic background re-classification is disabled for now — draft memos
+  // are re-classified on demand via the draft room's "전체 재분류" action.)
   if (firebaseReady) {
     unawaited(container.read(classificationWorkerProvider).processPending());
   }
