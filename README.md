@@ -84,3 +84,16 @@ Flutter · Riverpod · Drift · Freezed · go_router · Firebase AI Logic(`fireb
   중립적인 미니멀 메신저 톤으로 새로 구성했습니다(참고용 보관).
 - `genui`는 alpha 단계로 API가 바뀔 수 있습니다. 관련 코드는
   `lib/features/category_detail/genui/`에 격리되어 있습니다.
+
+## 알려진 이슈 — Gemini 사용량/제한
+
+무료(Gemini Developer API) 등급은 분당 요청·할당량 제한이 있습니다. 여러 메모를
+한꺼번에 분류하는 등 호출이 몰리면 일부가 과부하
+(`ServerException: ... is overloaded`)나 할당량 초과(`QuotaExceeded`, 429)로
+실패할 수 있습니다.
+
+- **증상:** 간헐적으로 메모가 "미분류"로 떨어짐(특히 버스트 직후). 잠시 뒤 자동 회복.
+- **현재 대응:** 실패/타임아웃 메모는 미분류 보관함에 모이고, 방의 **"전체 재분류"**로
+  기존 카테고리에 다시 매칭을 시도합니다.
+- **완화책:** 동시 처리 수를 낮추거나(`AppConstants.classifyConcurrency`), Blaze
+  요금제로 올려 한도를 늘리세요.
