@@ -132,12 +132,20 @@ class ClassificationWorker {
               .toList();
       if (candidates.isEmpty) return; // nothing to match against yet
 
+      // Reuse a previously fetched title if present; otherwise grab it now so the
+      // match has the link's actual subject to work with.
+      final fetchUrl = UrlDetector.firstUrl(memo.content);
+      final linkTitle = (fetchUrl != null && memo.linkTitle == null)
+          ? await _ref.read(linkMetadataServiceProvider).fetchTitle(fetchUrl)
+          : memo.linkTitle;
+
       final result = await service.classify(
         content: memo.content,
         existing: candidates,
         modelName: settings.geminiModel,
         allowNewCategory: false,
         generateSummary: settings.generateSummaries,
+        linkTitle: linkTitle,
       );
 
       if (result case Ok(value: final c)) {
@@ -149,6 +157,7 @@ class ClassificationWorker {
                   categoryId: matchedId,
                   status: MemoStatus.classified,
                   classifiedAt: now,
+                  linkTitle: linkTitle ?? memo.linkTitle,
                 ),
               );
           final cat = (await categoryRepo.getById(matchedId)).valueOrNull;
@@ -181,17 +190,25 @@ class ClassificationWorker {
               .where((c) => c.id != AppConstants.draftCategoryId)
               .toList();
 
+      // Resolve the link title up front so the classifier can read it: a bare
+      // URL (a YouTube video, an article) carries no clue on its own.
+      final fetchUrl = UrlDetector.firstUrl(memo.content);
+      final linkTitle = (fetchUrl != null && memo.linkTitle == null)
+          ? await _ref.read(linkMetadataServiceProvider).fetchTitle(fetchUrl)
+          : memo.linkTitle;
+
       final result = await service.classify(
         content: memo.content,
         existing: categories,
         modelName: settings.geminiModel,
         allowNewCategory: settings.autoCreateCategory,
         generateSummary: settings.generateSummaries,
+        linkTitle: linkTitle,
       );
 
       switch (result) {
         case Ok(value: final classification):
-          await _apply(memo, classification, categories);
+          await _apply(memo, classification, categories, linkTitle: linkTitle);
         case Err():
           // Timed out or errored → file it in the draft bucket, no retry.
           await _assignToDraft(memo);
@@ -262,8 +279,9 @@ class ClassificationWorker {
   Future<void> _apply(
     Memo memo,
     ClassificationResult result,
-    List<Category> categories,
-  ) async {
+    List<Category> categories, {
+    String? linkTitle,
+  }) async {
     final memoRepo = _ref.read(memoRepositoryProvider);
     final categoryRepo = _ref.read(categoryRepositoryProvider);
     final settings = _ref.read(settingsControllerProvider);
@@ -285,18 +303,19 @@ class ClassificationWorker {
         categoryId: categoryId,
         summary: result.summary,
         sourceUrl: sourceUrl,
+        // Persist the title we already fetched for classification so reference
+        // cards show what the link is.
+        linkTitle: linkTitle ?? memo.linkTitle,
         isDone: result.isDone,
         dueAt: result.dueAt,
         classifiedAt: now,
       ),
     );
 
-    // Best-effort, non-blocking: fetch the page title so reference cards show
-    // what the link is. Fetch the URL exactly as the user typed it — the
-    // model's echoed sourceUrl may be re-encoded/trimmed and 404 — and let the
-    // room update reactively when the title arrives.
+    // If we have a link but no title yet (e.g. the up-front fetch failed),
+    // retry it in the background and let the room update reactively.
     final fetchUrl = UrlDetector.firstUrl(memo.content) ?? sourceUrl;
-    if (fetchUrl != null && memo.linkTitle == null) {
+    if (fetchUrl != null && linkTitle == null && memo.linkTitle == null) {
       unawaited(_fetchLinkTitle(memo.id, fetchUrl));
     }
 

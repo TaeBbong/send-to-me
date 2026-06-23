@@ -32,6 +32,14 @@ class LinkMetadataService {
     final uri = Uri.tryParse(url);
     if (uri == null || !uri.hasScheme) return null;
 
+    // YouTube pages are JS-rendered, so scraping og:title is flaky. Their
+    // oEmbed endpoint returns the real video title (and channel) as JSON with
+    // no API key — try that first for any YouTube link.
+    if (_isYouTube(uri)) {
+      final title = await _fetchOEmbedTitle(uri);
+      if (title != null) return title;
+    }
+
     HttpClient? client;
     try {
       client = HttpClient()
@@ -52,6 +60,43 @@ class LinkMetadataService {
       // Read at most ~64KB — the <head> (and thus the title) lives up front.
       final html = await _readCapped(response, 64 * 1024);
       return _extractTitle(html);
+    } on TimeoutException {
+      return null;
+    } catch (_) {
+      return null;
+    } finally {
+      client?.close(force: true);
+    }
+  }
+
+  bool _isYouTube(Uri uri) {
+    final host = uri.host.toLowerCase();
+    return host == 'youtu.be' ||
+        host == 'youtube.com' ||
+        host.endsWith('.youtube.com');
+  }
+
+  /// Resolves a YouTube video title via the keyless oEmbed endpoint. Returns
+  /// `"<title> · <channel>"` when both are present, else just the title.
+  Future<String?> _fetchOEmbedTitle(Uri videoUri) async {
+    final endpoint = Uri.https('www.youtube.com', '/oembed', {
+      'url': videoUri.toString(),
+      'format': 'json',
+    });
+    HttpClient? client;
+    try {
+      client = HttpClient()..connectionTimeout = const Duration(seconds: 5);
+      final request = await client.getUrl(endpoint);
+      final response = await request.close().timeout(
+        const Duration(seconds: 6),
+      );
+      if (response.statusCode != HttpStatus.ok) return null;
+      final body = await response.transform(utf8.decoder).join();
+      final json = jsonDecode(body) as Map<String, dynamic>;
+      final title = _clean(json['title'] as String?);
+      if (title == null) return null;
+      final author = _clean(json['author_name'] as String?);
+      return author == null ? title : '$title · $author';
     } on TimeoutException {
       return null;
     } catch (_) {

@@ -139,6 +139,7 @@ Rules (apply in order):
     required List<Category> existing,
     required bool allowNewCategory,
     required bool generateSummary,
+    String? linkTitle,
   }) {
     final buffer = StringBuffer();
     buffer.writeln('## Existing categories');
@@ -162,6 +163,12 @@ Rules (apply in order):
         '\n(Detected URL: $url — this memo contains a link, so it MUST go to a '
         '"reference" category, never a note/todo/idea.)',
       );
+      if (linkTitle != null && linkTitle.isNotEmpty) {
+        // The page/video title is often the only clue to what a bare link is
+        // about (e.g. a YouTube URL). Feed it in so the model can classify and
+        // summarize on the actual content, not just the opaque URL.
+        buffer.writeln('(Link title: "$linkTitle")');
+      }
     }
     if (!allowNewCategory && existing.isNotEmpty) {
       buffer.writeln(
@@ -181,12 +188,14 @@ Rules (apply in order):
     required String modelName,
     required bool allowNewCategory,
     required bool generateSummary,
+    String? linkTitle,
   }) async {
     final prompt = _buildPrompt(
       content: content,
       existing: existing,
       allowNewCategory: allowNewCategory,
       generateSummary: generateSummary,
+      linkTitle: linkTitle,
     );
 
     final sw = Stopwatch()..start();
