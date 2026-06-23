@@ -1,4 +1,4 @@
-package com.example.awesome_memo
+package com.taebbong.sendtome
 
 import io.flutter.embedding.android.FlutterActivity
 

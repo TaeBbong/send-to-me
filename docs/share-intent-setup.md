@@ -33,7 +33,7 @@
 iOS만 Xcode에서 타겟을 직접 추가해야 합니다. 아래 **App Group ID로 통일**하세요:
 
 ```
-group.com.example.awesomeMemo
+group.com.taebbong.sendtome
 ```
 
 ### 2-1. 타겟 추가
@@ -46,7 +46,7 @@ group.com.example.awesomeMemo
 ### 2-2. App Group 추가 (두 타겟 모두)
 **Runner**, **ShareExtension** 각각에 대해:
 1. 타겟 선택 → **Signing & Capabilities → + Capability → App Groups**
-2. `group.com.example.awesomeMemo` 추가 (양쪽 동일하게)
+2. `group.com.taebbong.sendtome` 추가 (양쪽 동일하게)
 
 > 실기기/TestFlight 배포 시에는 Apple Developer 계정에 동일한 App Group을 등록해야 합니다.
 > 시뮬레이터 개발 중에는 위 값 그대로 동작합니다.
@@ -65,7 +65,7 @@ class ShareViewController: ShareHandlerIosViewController {}
 
 ```xml
 <key>AppGroupId</key>
-<string>group.com.example.awesomeMemo</string>
+<string>group.com.taebbong.sendtome</string>
 <key>CFBundleVersion</key>
 <string>$(FLUTTER_BUILD_NUMBER)</string>
 <key>NSExtension</key>
