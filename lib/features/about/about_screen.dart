@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/theme_extensions.dart';
+import '../../core/utils/korean_text.dart';
 
 /// App + developer information ("개발자 정보"), with how-it-works copy.
 class AboutScreen extends StatelessWidget {
@@ -55,10 +56,12 @@ class AboutScreen extends StatelessWidget {
           _Section(
             title: '어떻게 동작하나요',
             child: Text(
-              '메모를 채팅하듯 툭 던지면 곧바로 저장돼요. 잠시 뒤 AI가 배경에서 '
-              '내용을 살펴보고 어울리는 카테고리로 분류하거나, 마땅한 분류가 없으면 '
-              '새 카테고리를 만들어 채팅방처럼 모아둡니다. 각 방은 카테고리 성격(할 일·'
-              '참고자료·아이디어·메모)에 맞는 전용 화면으로 다르게 표시돼요.',
+              keepAll(
+                '메모를 채팅하듯 툭 던지면 곧바로 저장돼요. 잠시 뒤 AI가 배경에서 '
+                '내용을 살펴보고 어울리는 카테고리로 분류하거나, 마땅한 분류가 없으면 '
+                '새 카테고리를 만들어 채팅방처럼 모아둡니다. 각 방은 카테고리 성격(할 일·'
+                '참고자료·아이디어·메모)에 맞는 전용 화면으로 다르게 표시돼요.',
+              ),
               style: context.textTheme.bodyMedium,
             ),
           ),
@@ -92,8 +95,10 @@ class AboutScreen extends StatelessWidget {
           _Section(
             title: '기술 스택',
             child: Text(
-              'Flutter · Riverpod · Drift(로컬 우선) · Firebase AI Logic(Gemini). '
-              '클린 아키텍처로 구성했습니다.',
+              keepAll(
+                'Flutter · Riverpod · Drift(로컬 우선) · Firebase AI Logic(Gemini). '
+                '클린 아키텍처로 구성했습니다.',
+              ),
               style: context.textTheme.bodyMedium,
             ),
           ),

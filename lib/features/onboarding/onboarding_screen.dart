@@ -7,6 +7,7 @@ import '../../core/providers/app_providers.dart';
 import '../../core/router/app_routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/theme_extensions.dart';
+import '../../core/utils/korean_text.dart';
 
 /// A lightweight 3-step intro shown once on first launch.
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -135,13 +136,13 @@ class _OnboardPage extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xxl),
           Text(
-            data.title,
+            keepAll(data.title),
             textAlign: TextAlign.center,
             style: context.textTheme.titleLarge,
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            data.body,
+            keepAll(data.body),
             textAlign: TextAlign.center,
             style: context.textTheme.bodyMedium?.copyWith(
               color: context.appColors.textSecondary,

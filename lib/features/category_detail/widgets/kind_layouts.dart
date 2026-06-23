@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/korean_text.dart';
 import '../../../core/utils/url_detector.dart';
 import '../../../domain/entities/enums.dart';
 import '../../../domain/entities/memo.dart';
@@ -189,7 +190,7 @@ class _ReferenceLayout extends StatelessWidget {
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
-                        title,
+                        keepAll(title),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: context.textTheme.titleSmall,

@@ -7,6 +7,7 @@ import '../../core/firebase/firebase_status.dart';
 import '../../core/router/app_routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/theme_extensions.dart';
+import '../../core/utils/korean_text.dart';
 import 'settings_controller.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -190,8 +191,10 @@ class _FirebaseNotice extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              'Firebase가 설정되지 않아 AI 기능이 꺼져 있어요. '
-              'flutterfire configure로 연동하면 자동 분류가 켜집니다.',
+              keepAll(
+                'Firebase가 설정되지 않아 AI 기능이 꺼져 있어요. '
+                'flutterfire configure로 연동하면 자동 분류가 켜집니다.',
+              ),
               style: context.textTheme.bodySmall?.copyWith(
                 color: context.colors.onErrorContainer,
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
 import '../theme/theme_extensions.dart';
+import '../utils/korean_text.dart';
 
 /// A friendly, centered empty-state used across chat/list/search screens.
 class EmptyState extends StatelessWidget {
@@ -38,14 +39,14 @@ class EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              title,
+              keepAll(title),
               textAlign: TextAlign.center,
               style: context.textTheme.titleMedium,
             ),
             if (message != null) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
-                message!,
+                keepAll(message!),
                 textAlign: TextAlign.center,
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: c.textSecondary,
