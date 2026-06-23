@@ -248,8 +248,17 @@ class _ReferenceLayout extends StatelessWidget {
 
   Future<void> _open(String url) async {
     final uri = Uri.tryParse(url);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (uri == null) return;
+    // Try the external browser first; fall back to an in-app webview if no
+    // external handler is available. Don't gate on canLaunchUrl alone — it can
+    // return false even when a launch would succeed.
+    try {
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok) {
+        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+      }
+    } catch (_) {
+      await launchUrl(uri, mode: LaunchMode.platformDefault);
     }
   }
 }

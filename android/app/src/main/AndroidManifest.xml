@@ -59,5 +59,18 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Required so canLaunchUrl()/launchUrl() can open web links on
+             Android 11+ (package visibility). Without this, canLaunchUrl
+             returns false for http(s) URLs and the "열기" button does nothing. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="http"/>
+        </intent>
     </queries>
 </manifest>
