@@ -49,6 +49,42 @@ dev_dependencies:
   freezed: ^3.2.0
   json_serializable: ^6.9.5
   drift_dev: ^2.28.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
 
 flutter:
   uses-material-design: true
+
+# App launcher icons — run: dart run flutter_launcher_icons
+# Source: a 1024x1024 PNG at assets/icon/app_icon.png (design it with the app-icon skill).
+flutter_launcher_icons:
+  image_path: "assets/icon/app_icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  # Android adaptive icon (foreground PNG on a solid brand background).
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  web:
+    generate: false
+  windows:
+    generate: false
+  macos:
+    generate: false
+
+# Native splash screen — run: dart run flutter_native_splash:create
+# Source logo at assets/icon/splash_logo.png (centered on the brand background).
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/icon/splash_logo.png
+  color_dark: "#0E0E10"
+  image_dark: assets/icon/splash_logo.png
+  android: true
+  ios: true
+  web: false
+  android_12:
+    image: assets/icon/splash_logo.png
+    color: "#FFFFFF"
+    image_dark: assets/icon/splash_logo.png
+    color_dark: "#0E0E10"
