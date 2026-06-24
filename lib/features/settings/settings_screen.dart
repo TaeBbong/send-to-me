@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,6 +57,22 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _pickModel(context, ref, settings.geminiModel),
           ),
 
+          if (Platform.isIOS || Platform.isAndroid) ...[
+            const Divider(height: AppSpacing.xl),
+            _SectionHeader('빠른 메모'),
+            ListTile(
+              leading: const Icon(Icons.bolt_rounded),
+              title: const Text('앱 밖에서 바로 메모하기'),
+              subtitle: Text(
+                Platform.isIOS
+                    ? '폰 뒷면 탭·액션 버튼으로 입력창 열기'
+                    : '알림창 타일로 어디서든 입력창 열기',
+              ),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => _showQuickCaptureGuide(context),
+            ),
+          ],
+
           const Divider(height: AppSpacing.xl),
           _SectionHeader('화면'),
           ListTile(
@@ -77,6 +95,75 @@ class SettingsScreen extends ConsumerWidget {
             child: Center(child: Text('v${AppConstants.appVersion}')),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showQuickCaptureGuide(BuildContext context) {
+    final steps = Platform.isIOS
+        ? const [
+            '단축어 앱을 열고 \'나에게 보내기 > 빠른 메모\' 동작을 찾아요.',
+            '설정 > 손쉬운 사용 > 터치 > 뒷면 탭에서 \'두 번 탭\'에 그 단축어를 지정해요.',
+            '이제 폰 뒷면을 두 번 톡톡 치면, 앱을 열지 않아도 입력창이 떠서 바로 저장돼요.',
+            '액션 버튼(15 Pro 이상)이나 제어 센터에도 같은 단축어를 넣을 수 있어요.',
+          ]
+        : const [
+            '알림창(상단바)을 끝까지 내린 뒤 연필 모양 편집 버튼을 눌러요.',
+            '타일 목록에서 \'빠른 메모\'를 끌어다 추가해요.',
+            '이제 알림창의 타일을 누르면 어디서든 입력창이 떠요.',
+            '(삼성) 설정 > 유용한 기능 > 사이드 버튼 > 두 번 누르기를 \'앱 열기 > 나에게 보내기\'로 지정하면 버튼으로도 열려요.',
+          ];
+
+    return showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.xl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Platform.isIOS ? '폰 뒷면 탭으로 메모하기' : '알림창 타일로 메모하기',
+                style: ctx.textTheme.titleMedium,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              for (var i = 0; i < steps.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 12,
+                        backgroundColor: ctx.colors.primary,
+                        child: Text(
+                          '${i + 1}',
+                          style: ctx.textTheme.labelSmall?.copyWith(
+                            color: ctx.colors.onPrimary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Text(
+                          keepAll(steps[i]),
+                          style: ctx.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

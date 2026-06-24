@@ -43,6 +43,28 @@
                 <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
+        <!-- Translucent quick-capture screen launched by the Quick Settings tile.
+             Not exported: only our own tile (same app) starts it. -->
+        <activity
+            android:name=".QuickCaptureActivity"
+            android:exported="false"
+            android:theme="@style/QuickCaptureTheme"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:windowSoftInputMode="adjustResize|stateVisible" />
+        <!-- Quick Settings tile → opens QuickCaptureActivity from the shade. -->
+        <service
+            android:name=".QuickCaptureTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_quick_capture"
+            android:label="@string/quick_capture_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

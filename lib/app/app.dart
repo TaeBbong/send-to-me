@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants/app_constants.dart';
 import '../core/theme/app_theme.dart';
+import '../features/quick_capture/quick_capture_listener.dart';
 import '../features/settings/settings_controller.dart';
 import '../features/sharing/share_intent_listener.dart';
 import 'app_router.dart';
@@ -25,8 +26,9 @@ class AwesomeMemoApp extends ConsumerWidget {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
       routerConfig: router,
-      builder: (context, child) =>
-          ShareIntentListener(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => ShareIntentListener(
+        child: QuickCaptureListener(child: child ?? const SizedBox.shrink()),
+      ),
     );
   }
 }
