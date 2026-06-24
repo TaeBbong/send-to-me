@@ -7,6 +7,7 @@ import '../core/providers/app_providers.dart';
 import '../core/router/app_routes.dart';
 import '../features/about/about_screen.dart';
 import '../features/categories/category_list_screen.dart';
+import '../features/categories/hidden_categories_screen.dart';
 import '../features/category_detail/category_detail_screen.dart';
 import '../features/memo_chat/memo_chat_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
@@ -56,6 +57,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: AppRoutes.rooms,
                 builder: (context, state) => const CategoryListScreen(),
                 routes: [
+                  GoRoute(
+                    path: AppRoutes.hidden,
+                    builder: (context, state) =>
+                        const HiddenCategoriesScreen(),
+                  ),
                   GoRoute(
                     path: ':id',
                     name: AppRoutes.room,

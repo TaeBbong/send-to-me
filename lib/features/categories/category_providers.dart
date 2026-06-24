@@ -13,6 +13,12 @@ final categoriesProvider = StreamProvider<List<Category>>(
   (ref) => ref.watch(categoryRepositoryProvider).watchAll(),
 );
 
+/// Hidden categories, most-recently-active first. Backs the hidden-rooms view
+/// and the "숨겨진 채팅방" entry row on the main list.
+final archivedCategoriesProvider = StreamProvider<List<Category>>(
+  (ref) => ref.watch(categoryRepositoryProvider).watchArchived(),
+);
+
 /// Memos inside a single category, in chat order (oldest first).
 final memosByCategoryProvider = StreamProvider.family<List<Memo>, String>(
   (ref, categoryId) =>
@@ -30,7 +36,7 @@ final categoryByIdProvider = Provider.family<Category?, String>((ref, id) {
 
 final categoryActionsProvider = Provider<CategoryActions>(CategoryActions.new);
 
-/// Imperative category operations (rename / archive / delete) from the UI.
+/// Imperative category operations (rename / hide / unhide / delete) from the UI.
 class CategoryActions {
   CategoryActions(this._ref);
   final Ref _ref;
@@ -41,6 +47,9 @@ class CategoryActions {
 
   Future<void> archive(String id) =>
       _ref.read(categoryRepositoryProvider).archive(id);
+
+  Future<void> unarchive(String id) =>
+      _ref.read(categoryRepositoryProvider).unarchive(id);
 
   Future<void> delete(String id) =>
       _ref.read(categoryRepositoryProvider).delete(id);

@@ -84,6 +84,22 @@ void main() {
     expect((await repo.getById('c1')).valueOrNull, isNotNull);
   });
 
+  test('unarchive returns the category to getAll', () async {
+    await repo.add(_category('c1'));
+    await repo.archive('c1');
+    expect((await repo.getAll()).valueOrNull, isEmpty);
+    await repo.unarchive('c1');
+    expect((await repo.getAll()).valueOrNull!.single.id, 'c1');
+  });
+
+  test('watchArchived emits only archived, updatedAt-descending', () async {
+    await repo.add(_category('live'));
+    await repo.add(_category('h1', archived: true, updatedAt: DateTime(2026, 1, 1)));
+    await repo.add(_category('h2', archived: true, updatedAt: DateTime(2026, 2, 1)));
+    final categories = await repo.watchArchived().first;
+    expect(categories.map((c) => c.id), ['h2', 'h1']);
+  });
+
   test('delete removes the row entirely', () async {
     await repo.add(_category('c1'));
     await repo.delete('c1');

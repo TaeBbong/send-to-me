@@ -21,6 +21,14 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
+  Stream<List<Category>> watchArchived() {
+    final query = _db.select(_db.categories)
+      ..where((t) => t.archived.equals(true))
+      ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]);
+    return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+  }
+
+  @override
   Future<Result<List<Category>>> getAll() async {
     try {
       final query = _db.select(_db.categories)
@@ -80,7 +88,22 @@ class CategoryRepositoryImpl implements CategoryRepository {
       );
       return const Result.ok(null);
     } catch (e) {
-      return Result.err(StorageFailure('카테고리 보관 실패', cause: e));
+      return Result.err(StorageFailure('카테고리 숨기기 실패', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<void>> unarchive(String id) async {
+    try {
+      await (_db.update(_db.categories)..where((t) => t.id.equals(id))).write(
+        CategoriesCompanion(
+          archived: const Value(false),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+      return const Result.ok(null);
+    } catch (e) {
+      return Result.err(StorageFailure('카테고리 다시 보이기 실패', cause: e));
     }
   }
 
