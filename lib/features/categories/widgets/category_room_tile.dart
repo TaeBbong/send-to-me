@@ -13,9 +13,13 @@ import '../category_providers.dart';
 /// conversation: emoji avatar, name, last-memo preview, time and unread-style
 /// count badge.
 class CategoryRoomTile extends ConsumerWidget {
-  const CategoryRoomTile(this.category, {super.key});
+  const CategoryRoomTile(this.category, {this.isHidden = false, super.key});
 
   final Category category;
+
+  /// When true this row lives in the hidden-rooms view, so the long-press menu
+  /// offers "다시 보이기" (unhide) instead of "숨기기" (hide).
+  final bool isHidden;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -101,11 +105,18 @@ class CategoryRoomTile extends ConsumerWidget {
               title: const Text('이름 변경'),
               onTap: () => Navigator.pop(ctx, 'rename'),
             ),
-            ListTile(
-              leading: const Icon(Icons.archive_outlined),
-              title: const Text('보관'),
-              onTap: () => Navigator.pop(ctx, 'archive'),
-            ),
+            if (isHidden)
+              ListTile(
+                leading: const Icon(Icons.visibility_outlined),
+                title: const Text('다시 보이기'),
+                onTap: () => Navigator.pop(ctx, 'unhide'),
+              )
+            else
+              ListTile(
+                leading: const Icon(Icons.visibility_off_outlined),
+                title: const Text('숨기기'),
+                onTap: () => Navigator.pop(ctx, 'hide'),
+              ),
             ListTile(
               leading: const Icon(Icons.delete_outline_rounded),
               title: const Text('삭제'),
@@ -121,8 +132,10 @@ class CategoryRoomTile extends ConsumerWidget {
     switch (action) {
       case 'rename':
         await _renameDialog(context, ref);
-      case 'archive':
+      case 'hide':
         await actions.archive(category.id);
+      case 'unhide':
+        await actions.unarchive(category.id);
       case 'delete':
         await actions.delete(category.id);
     }
