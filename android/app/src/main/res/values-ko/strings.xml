@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">나에게 보내기</string>
     <string name="quick_capture_tile_label">빠른 메모</string>
+    <string name="quick_capture_a11y_label">빠른 메모 (접근성 단축키)</string>
+    <string name="quick_capture_a11y_description">접근성 버튼을 누르거나 접근성 단축키(볼륨 키·제스처)를 사용하면 빠른 메모 입력창을 열어요. 이 서비스는 화면 내용을 읽지 않으며, 메모 화면을 여는 용도로만 동작해요.</string>
 </resources>

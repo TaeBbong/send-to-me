@@ -10,6 +10,7 @@ import '../../core/router/app_routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/theme_extensions.dart';
 import '../../core/utils/korean_text.dart';
+import '../quick_capture/quick_capture_service.dart';
 import 'settings_controller.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -71,6 +72,14 @@ class SettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () => _showQuickCaptureGuide(context),
             ),
+            if (Platform.isAndroid)
+              ListTile(
+                leading: const Icon(Icons.accessibility_new_rounded),
+                title: const Text('접근성 단축키로 열기'),
+                subtitle: const Text('접근성 버튼·볼륨 키·제스처로 입력창 열기'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => _showAccessibilityGuide(context, ref),
+              ),
           ],
 
           const Divider(height: AppSpacing.xl),
@@ -95,6 +104,97 @@ class SettingsScreen extends ConsumerWidget {
             child: Center(child: Text('v${AppConstants.appVersion}')),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showAccessibilityGuide(BuildContext context, WidgetRef ref) {
+    final service = ref.read(quickCaptureServiceProvider);
+    const steps = [
+      '아래 \'접근성 설정 열기\'를 눌러요.',
+      '\'빠른 메모 (접근성 단축키)\'를 켜요.',
+      '단축키 방식(접근성 버튼 / 볼륨 키 두 개 길게 / 제스처)을 골라요.',
+      '이제 그 단축키를 쓰면 어디서든 입력창이 떠요.',
+    ];
+
+    return showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.xl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('접근성 단축키로 메모 열기', style: ctx.textTheme.titleMedium),
+              const SizedBox(height: AppSpacing.sm),
+              // Prominent disclosure (required for the AccessibilityService API).
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: ctx.colors.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: Text(
+                  keepAll(
+                    '이 기능을 켜면 접근성 서비스가 등록돼요. 접근성 버튼·볼륨 키·'
+                    '제스처로 빠른 메모 입력창을 여는 용도로만 쓰이고, '
+                    '화면 내용은 절대 읽지 않아요.',
+                  ),
+                  style: ctx.textTheme.bodySmall?.copyWith(
+                    color: ctx.appColors.textSecondary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              for (var i = 0; i < steps.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 12,
+                        backgroundColor: ctx.colors.primary,
+                        child: Text(
+                          '${i + 1}',
+                          style: ctx.textTheme.labelSmall?.copyWith(
+                            color: ctx.colors.onPrimary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Text(
+                          keepAll(steps[i]),
+                          style: ctx.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: AppSpacing.sm),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.settings_accessibility_rounded),
+                  label: const Text('접근성 설정 열기'),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    service.openAccessibilitySettings();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

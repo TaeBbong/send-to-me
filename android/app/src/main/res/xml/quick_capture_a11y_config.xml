@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Minimal config for a shortcut-target-only AccessibilityService: it requests the
+  accessibility button, subscribes to NO events, and cannot retrieve window
+  content. This minimized posture is intentional (privacy + Play policy): the
+  service only launches the quick-capture screen, it never reads the screen.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/quick_capture_a11y_description"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagRequestAccessibilityButton"
+    android:canRetrieveWindowContent="false"
+    android:isAccessibilityTool="false"
+    android:notificationTimeout="0" />

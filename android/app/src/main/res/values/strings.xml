@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Send to Me</string>
     <string name="quick_capture_tile_label">Quick memo</string>
+    <string name="quick_capture_a11y_label">Quick memo (accessibility shortcut)</string>
+    <string name="quick_capture_a11y_description">Opens the quick-memo input when you tap the Accessibility button or use the accessibility shortcut (volume keys / gesture). This service does not read your screen content; it only opens the memo screen.</string>
 </resources>
