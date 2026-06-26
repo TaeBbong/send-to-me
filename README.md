@@ -1,11 +1,51 @@
-# Awesome Memo
+# Awesome Memo · 나에게 보내기
 
-생각나면 톡 던지고, 정리는 AI가 — 메신저 스타일 + LLM 자동 분류 + 생성형 UI 메모 앱.
+> **생각나면 톡 던지고, 정리는 AI가.** 메신저 스타일 입력 + LLM 자동 분류 + 생성형 UI 메모 앱.
 
 메모를 "나에게 보내기" 채팅처럼 입력하면 즉시 저장되고, 백그라운드에서
 Firebase AI Logic(Gemini)이 내용을 분석해 어울리는 카테고리로 분류합니다.
 카테고리는 메신저 채팅방 목록처럼 보이고, 각 방은 성격(할 일/참고자료/아이디어/메모)에
 맞춰 생성형 UI(genui)로 다르게 렌더링됩니다.
+
+<p align="center">
+  <em>Flutter</em> · <em>Riverpod</em> · <em>Drift</em> · <em>Freezed</em> · <em>Firebase AI Logic (Gemini)</em> · <em>Clean Architecture</em>
+</p>
+
+## 스크린샷
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="screenshots/ios/6.9/01_capture.png" width="240" alt="채팅형 메모 입력" /><br/>
+      <sub><b>톡 던지듯 입력</b><br/>저장은 즉시, 정리는 AI가</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="screenshots/ios/6.9/02_classify.png" width="240" alt="AI 자동 분류" /><br/>
+      <sub><b>AI 자동 분류</b><br/>카테고리가 채팅방처럼</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="screenshots/ios/6.9/03_checklist.png" width="240" alt="할 일 체크리스트" /><br/>
+      <sub><b>유형별 생성형 UI</b><br/>할 일은 체크리스트로</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="screenshots/ios/6.9/04_cards.png" width="240" alt="참고자료 요약 카드" /><br/>
+      <sub><b>요약 카드</b><br/>링크·자료는 다시 찾기 쉽게</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="screenshots/ios/6.9/05_dark.png" width="240" alt="다크 모드" /><br/>
+      <sub><b>라이트 · 다크</b><br/>눈이 편한 다크 모드</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="screenshots/ios/6.9/06_settings.png" width="240" alt="설정" /><br/>
+      <sub><b>세밀한 설정</b><br/>AI 동작을 내 마음대로</sub>
+    </td>
+  </tr>
+</table>
+
+<sub>스토어 제출용 에셋(iOS · Android 사이즈, 피처 그래픽)과 재현 스크립트는
+<a href="screenshots/README.md"><code>screenshots/</code></a>에 있습니다.</sub>
 
 ## 주요 기능
 
