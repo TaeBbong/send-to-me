@@ -39,6 +39,7 @@ dependencies:
   url_launcher: ^6.3.2
   collection: ^1.19.1
   share_handler: ^0.0.25
+  share_plus: ^13.2.0
 
 dev_dependencies:
   flutter_test:

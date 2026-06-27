@@ -12,6 +12,7 @@ import '../../../domain/entities/memo.dart';
 import '../../categories/category_providers.dart';
 import '../memo_chat_providers.dart';
 import 'chat_bubble.dart';
+import 'memo_actions_sheet.dart';
 
 /// Renders one memo as an outgoing bubble plus a status footer that reflects the
 /// background classification lifecycle.
@@ -24,33 +25,10 @@ class MemoBubble extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ChatBubble(
       outgoing: true,
-      onLongPress: () => _confirmDelete(context, ref),
+      onLongPress: () => showMemoActionsSheet(context, memo),
       footer: _Footer(memo),
       child: Text(UrlDetector.decodeInText(memo.content)),
     );
-  }
-
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('메모 삭제'),
-        content: const Text('이 메모를 삭제할까요?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('취소'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('삭제'),
-          ),
-        ],
-      ),
-    );
-    if (ok == true) {
-      await ref.read(memoActionsProvider).delete(memo.id);
-    }
   }
 }
 
