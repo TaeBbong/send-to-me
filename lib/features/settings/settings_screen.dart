@@ -131,13 +131,32 @@ class SettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final model in AppConstants.selectableModels)
-                RadioListTile<String>(
-                  value: model,
-                  title: Text(model),
-                  subtitle: model == AppConstants.defaultModel
-                      ? const Text('기본값 · 무료 등급')
-                      : null,
-                ),
+                if (model == AppConstants.defaultModel)
+                  RadioListTile<String>(
+                    value: model,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(model),
+                    subtitle: const Text('기본값 · 무료 등급'),
+                  )
+                else
+                  // Heavier models are gated behind a (future) paid tier:
+                  // shown but disabled, with a lock and an explanatory tooltip.
+                  RadioListTile<String>(
+                    value: model,
+                    enabled: false,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(model),
+                    subtitle: const Text('유료 버전에서 사용할 수 있어요'),
+                    secondary: Tooltip(
+                      message: '유료 버전 결제 후 사용할 수 있어요',
+                      triggerMode: TooltipTriggerMode.tap,
+                      child: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 20,
+                        color: context.appColors.textSecondary,
+                      ),
+                    ),
+                  ),
             ],
           ),
         ),
