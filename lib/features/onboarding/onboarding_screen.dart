@@ -25,12 +25,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     _OnboardData(
       icon: Icons.bolt_rounded,
       title: '생각나면 톡 던지세요',
-      body: '메신저에 메시지 보내듯, 떠오르는 메모를 그냥 적어 보세요.\n저장은 즉시, 고민은 0초.',
+      body: '메신저에 메시지 보내듯,\n떠오르는 메모를 그냥 적어 보세요.\n저장은 즉시, 고민은 0초.',
     ),
     _OnboardData(
       icon: Icons.auto_awesome_rounded,
       title: '정리는 AI가 알아서',
-      body: '저장한 메모를 배경에서 분석해 어울리는 카테고리로 분류해요.\n없으면 새 분류를 만들어 둡니다.',
+      body: '저장한 메모를 배경에서 분석해\n어울리는 카테고리로 분류해요.\n없으면 새 분류를 만들어 둡니다.',
     ),
     _OnboardData(
       icon: Icons.dashboard_customize_rounded,
@@ -72,10 +72,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             Align(
               alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: _finish,
-                child: const Text('건너뛰기'),
-              ),
+              child: TextButton(onPressed: _finish, child: const Text('건너뛰기')),
             ),
             Expanded(
               child: PageView.builder(
