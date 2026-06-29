@@ -12,6 +12,17 @@ import 'core/firebase/firebase_init.dart';
 import 'core/firebase/firebase_status.dart';
 import 'core/providers/app_providers.dart';
 import 'features/classification/classification_providers.dart';
+import 'features/quick_capture/quick_capture_app.dart';
+
+/// Secondary Dart entry point for Android's translucent quick-capture activity
+/// ([QuickCaptureActivity]). It MUST live in the root library (this file) so the
+/// engine can resolve it by name without a library URI; running it from its own
+/// module file silently fails to start, leaving a blank transparent screen.
+@pragma('vm:entry-point')
+void quickCaptureMain() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const QuickCaptureApp());
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

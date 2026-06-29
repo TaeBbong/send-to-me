@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Entry point for the Android translucent "quick capture" activity.
-///
-/// This runs in a SEPARATE Flutter engine from the main app (launched by the
-/// Quick Settings tile), so it deliberately has NO access to Riverpod, the Drift
-/// database, or any app state. It is a tiny, self-contained capture surface: a
-/// dimmed scrim with a single input. On send it hands the text to the native
-/// side ([_channel] `saveCapture`), which appends it to the shared queue; the
-/// main app drains and persists that queue on its next launch/resume
-/// (see `QuickCaptureListener`). The activity then finishes.
-///
-/// Registered as a Dart entry point (referenced by name from `QuickCaptureActivity`).
-@pragma('vm:entry-point')
-void quickCaptureMain() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const QuickCaptureApp());
-}
-
 const _channel = MethodChannel('app/quick_capture');
 
+/// The UI for the Android translucent "quick capture" activity, run via the
+/// `quickCaptureMain` entry point in `lib/main.dart`.
+///
+/// This runs in a SEPARATE Flutter engine from the main app (launched by the
+/// Quick Settings tile or accessibility shortcut), so it deliberately has NO
+/// access to Riverpod, the Drift database, or any app state. It is a tiny,
+/// self-contained capture surface: a dimmed scrim with a single input. On send
+/// it hands the text to the native side ([_channel] `saveCapture`), which
+/// appends it to the shared queue; the main app drains and persists that queue
+/// on its next launch/resume (see `QuickCaptureListener`). The activity then
+/// finishes.
 class QuickCaptureApp extends StatelessWidget {
   const QuickCaptureApp({super.key});
 
