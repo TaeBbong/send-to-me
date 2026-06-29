@@ -12,11 +12,17 @@ abstract final class AppConstants {
   static const String defaultModel = 'gemini-2.5-flash-lite';
   static const String fallbackModel = 'gemini-2.5-flash';
 
-  /// How long a single classification LLM call may run before we abort it. The
-  /// lite model normally answers in ~2s; a request still pending well past that
-  /// is usually a dead idle keep-alive socket (mobile NAT drops it after a few
-  /// minutes), so we cut it early and retry on a fresh connection.
-  static const Duration classifyTimeout = Duration(seconds: 10);
+  /// Timeout for the FIRST classification attempt. Healthy lite responses
+  /// usually land within ~3s, so a request pending past this is most likely a
+  /// dead idle keep-alive socket (mobile NAT drops it after a few minutes) —
+  /// abort fast and retry on a fresh connection ([classifyRetryTimeout]).
+  static const Duration classifyTimeout = Duration(seconds: 3);
+
+  /// Timeout for the retry / fallback attempt. It runs on a fresh connection
+  /// (so no dead-socket hang) and gets more room for an occasional slow-but-
+  /// healthy response. Worst-case wait before a memo falls back to the draft
+  /// bucket is therefore ≈ classifyTimeout + classifyRetryTimeout (≈11s).
+  static const Duration classifyRetryTimeout = Duration(seconds: 8);
 
   /// Max number of memos classified concurrently when several are pending.
   static const int classifyConcurrency = 4;

@@ -235,24 +235,25 @@ Rules (apply in order):
     }
   }
 
-  /// Each attempt is bounded by [AppConstants.classifyTimeout]. A timeout is
-  /// usually a dead idle keep-alive socket, so we retry the same model once
-  /// (which establishes a fresh connection). Non-timeout errors fall back to
-  /// [AppConstants.fallbackModel] once.
+  /// The first attempt is bounded by the short [AppConstants.classifyTimeout]
+  /// to fail fast on a dead idle keep-alive socket; the retry runs on a fresh
+  /// connection with the longer [AppConstants.classifyRetryTimeout]. Non-timeout
+  /// errors fall back to [AppConstants.fallbackModel] once (also on a fresh
+  /// connection, so it gets the longer timeout).
   Future<String?> _generateWithFallback(String modelName, String prompt) async {
-    Future<String?> run(String model) => _model(model)
+    Future<String?> run(String model, Duration timeout) => _model(model)
         .generateContent([Content.text(prompt)])
-        .timeout(AppConstants.classifyTimeout)
+        .timeout(timeout)
         .then((resp) => resp.text);
 
     try {
-      return await run(modelName);
+      return await run(modelName, AppConstants.classifyTimeout);
     } on TimeoutException {
       DiagnosticLog.instance.log('[AICLASSIFY] timeout → retrying once on a fresh connection');
-      return await run(modelName);
+      return await run(modelName, AppConstants.classifyRetryTimeout);
     } catch (_) {
       if (modelName == AppConstants.fallbackModel) rethrow;
-      return await run(AppConstants.fallbackModel);
+      return await run(AppConstants.fallbackModel, AppConstants.classifyRetryTimeout);
     }
   }
 }
