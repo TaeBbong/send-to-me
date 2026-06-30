@@ -1,7 +1,7 @@
 name: awesome_memo
 description: "Awesome Memo — a messenger-style memo app with LLM auto-classification and per-kind room templates."
 publish_to: 'none'
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.10.0

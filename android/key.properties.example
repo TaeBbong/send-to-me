@@ -1,0 +1,14 @@
+# Copy this to android/key.properties (git-ignored) and fill in your values
+# after generating the upload keystore. storeFile is resolved relative to the
+# android/app directory, so an absolute path is the safest choice.
+#
+# Generate the keystore (do this ONCE, then back it up somewhere safe — if you
+# lose it you can never update the app on Play again):
+#
+#   keytool -genkey -v -keystore ~/sendtome-upload.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+storePassword=
+keyPassword=
+keyAlias=upload
+storeFile=/sendtome-upload.jks

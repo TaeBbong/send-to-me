@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Needed to read files shared in from other apps (e.g. images). -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Needed to read files shared in from other apps (e.g. images). Scoped to
+         API 32 and below: on Android 13+ shared media arrives via the system
+         share sheet's granted URIs, so the broad storage permission isn't
+         needed (and Play scrutinizes it). -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
