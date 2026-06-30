@@ -69,21 +69,6 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE"/>
             </intent-filter>
         </service>
-        <!-- Accessibility shortcut → opens QuickCaptureActivity. Only a shortcut
-             target: requests the accessibility button, reads no screen content
-             (see res/xml/quick_capture_a11y_config). -->
-        <service
-            android:name=".QuickCaptureAccessibilityService"
-            android:exported="true"
-            android:label="@string/quick_capture_a11y_label"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/quick_capture_a11y_config"/>
-        </service>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

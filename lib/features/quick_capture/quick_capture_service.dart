@@ -25,28 +25,6 @@ class QuickCaptureService {
     if (result == null) return const [];
     return result.where((e) => e.trim().isNotEmpty).toList(growable: false);
   }
-
-  /// Whether the Android accessibility-shortcut service is currently enabled.
-  /// Android-only; returns false elsewhere (and if the channel is unavailable).
-  Future<bool> isAccessibilityEnabled() async {
-    try {
-      return await _channel.invokeMethod<bool>('isAccessibilityEnabled') ?? false;
-    } on MissingPluginException {
-      return false;
-    } on PlatformException {
-      return false;
-    }
-  }
-
-  /// Opens the system Accessibility settings (deep-linked to our service on
-  /// Android 11+) so the user can enable the shortcut. No-op where unsupported.
-  Future<void> openAccessibilitySettings() async {
-    try {
-      await _channel.invokeMethod<void>('openAccessibilitySettings');
-    } on MissingPluginException {
-      // No native surface on this platform — nothing to open.
-    }
-  }
 }
 
 final quickCaptureServiceProvider = Provider<QuickCaptureService>(

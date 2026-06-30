@@ -7,7 +7,7 @@ const _channel = MethodChannel('app/quick_capture');
 /// `quickCaptureMain` entry point in `lib/main.dart`.
 ///
 /// This runs in a SEPARATE Flutter engine from the main app (launched by the
-/// Quick Settings tile or accessibility shortcut), so it deliberately has NO
+/// Quick Settings tile), so it deliberately has NO
 /// access to Riverpod, the Drift database, or any app state. It is a tiny,
 /// self-contained capture surface: a dimmed scrim with a single input. On send
 /// it hands the text to the native side ([_channel] `saveCapture`), which
