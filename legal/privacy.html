@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개인정보처리방침 — 나에게 보내기 (Send to Me)</title>
+  <meta name="description" content="나에게 보내기(Send to Me) 앱 개인정보처리방침." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="site">
+      <div class="logo">✉️</div>
+      <div>
+        <div class="title">나에게 보내기 · Send to Me</div>
+        <div class="subtitle">개인정보처리방침</div>
+      </div>
+    </header>
+
+    <h1>개인정보처리방침</h1>
+    <p class="updated">시행일: 2026년 6월 30일 · 최종 수정일: 2026년 6월 30일</p>
+
+    <div class="card">
+      <p><strong>나에게 보내기(Send to Me)</strong>(이하 "앱")는 이용자의 개인정보를 중요하게
+      생각하며, 「개인정보 보호법」 등 관련 법령을 준수합니다. 본 방침은 앱이 어떤 정보를
+      수집·이용·보관하는지, 그리고 이용자가 가지는 권리를 설명합니다.</p>
+
+      <div class="note">
+        <strong>핵심 요약:</strong> 이 앱은 <strong>로컬 우선(local-first)</strong>으로
+        동작합니다. 회원가입·로그인이 없으며, 작성한 메모는 기본적으로
+        <strong>이용자의 기기에만</strong> 저장됩니다. 별도의 서버 계정에 메모를
+        업로드하거나 보관하지 않습니다.
+      </div>
+    </div>
+
+    <h2>1. 수집·처리하는 정보</h2>
+    <p>앱은 회원가입을 요구하지 않으며, 이름·이메일·전화번호 등 이용자를 직접 식별하는
+    정보를 수집하지 않습니다. 앱이 다루는 정보는 다음과 같습니다.</p>
+
+    <table>
+      <thead>
+        <tr><th>구분</th><th>내용</th><th>저장 위치</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>메모 콘텐츠</td>
+          <td>이용자가 직접 입력하거나 다른 앱에서 공유/붙여넣기로 전달한 텍스트·링크, 그리고
+          이로부터 생성된 카테고리·분류 결과</td>
+          <td>이용자 기기(로컬 데이터베이스)</td>
+        </tr>
+        <tr>
+          <td>분류 요청 데이터</td>
+          <td>자동 분류를 위해 AI 모델로 전송되는 메모 텍스트</td>
+          <td>처리 시점에만 전송, 앱은 별도 보관하지 않음</td>
+        </tr>
+        <tr>
+          <td>앱 설정</td>
+          <td>테마(라이트/다크), 사용 모델, 기능 토글 등 환경 설정 값</td>
+          <td>이용자 기기(로컬)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>2. AI 자동 분류와 제3자 처리</h2>
+    <p>앱의 핵심 기능인 자동 분류를 제공하기 위해, 이용자가 작성한 메모 텍스트는
+    <strong>Google의 Firebase AI Logic(Gemini)</strong>로 전송되어 처리됩니다. 이 과정에서:</p>
+    <ul>
+      <li>전송되는 데이터는 분류에 필요한 <strong>메모 텍스트</strong>에 한정됩니다.</li>
+      <li>전송은 분류가 필요한 시점에만 이루어지며, 처리 결과(카테고리)만 기기에 저장됩니다.</li>
+      <li>전송 데이터의 처리 방식은 Google의 정책을 따릅니다.
+        자세한 내용은
+        <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase 개인정보 보호</a> 및
+        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google 개인정보처리방침</a>을 참고하세요.</li>
+    </ul>
+    <div class="note">
+      민감하거나 비밀로 유지되어야 하는 정보는 메모로 입력하지 않으실 것을 권장합니다.
+      자동 분류 기능은 설정에서 끌 수 있으며, 이 경우 메모는 외부로 전송되지 않습니다.
+    </div>
+
+    <h2>3. 링크 정보 가져오기</h2>
+    <p>참고자료 유형의 메모에 URL이 포함된 경우, 보기 편하도록 해당 링크의 제목 등 공개된
+    메타데이터를 가져와 표시할 수 있습니다. 이 과정에서 해당 URL의 서버로 일반적인 웹 요청이
+    발생할 수 있습니다.</p>
+
+    <h2>4. 정보를 이용하는 목적</h2>
+    <ul>
+      <li>메모 저장·조회·검색·관리 등 앱의 기본 기능 제공</li>
+      <li>메모 내용에 따른 카테고리 자동 분류 및 유형별 화면 제공</li>
+      <li>이용자 설정에 따른 화면·동작 적용</li>
+    </ul>
+
+    <h2>5. 보관 및 파기</h2>
+    <ul>
+      <li>메모·설정 등 모든 로컬 데이터는 이용자 기기에 저장되며, 이용자가 앱 내에서
+        직접 삭제하거나 앱을 삭제하면 함께 삭제됩니다.</li>
+      <li>AI 분류를 위해 전송된 텍스트는 앱이 별도로 저장·축적하지 않습니다.</li>
+    </ul>
+
+    <h2>6. 제3자 제공 및 광고</h2>
+    <p>앱은 이용자의 메모를 마케팅·광고 목적으로 제3자에게 판매하거나 제공하지 않습니다.
+    AI 분류를 위한 Google로의 전송(2항)을 제외하고, 메모 콘텐츠는 외부로 공유되지 않습니다.</p>
+
+    <h2>7. 이용자의 권리</h2>
+    <p>이용자는 언제든지 앱 내에서 메모를 수정·이동·삭제할 수 있으며, 앱을 삭제함으로써
+    기기에 저장된 모든 데이터를 제거할 수 있습니다. 회원 계정이 없으므로 별도의 탈퇴 절차는
+    필요하지 않습니다.</p>
+
+    <h2>8. 아동의 개인정보</h2>
+    <p>앱은 만 14세 미만 아동을 주요 대상으로 하지 않으며, 아동의 개인정보를 고의로
+    수집하지 않습니다.</p>
+
+    <h2>9. 방침의 변경</h2>
+    <p>본 방침은 법령·서비스 변경에 따라 개정될 수 있으며, 변경 시 본 페이지를 통해
+    공지합니다. 중요한 변경의 경우 시행일을 명시합니다.</p>
+
+    <h2>10. 문의</h2>
+    <p class="contact">개인정보 처리에 관한 문의는 아래로 연락해 주세요.</p>
+    <p class="contact">개발자: taebbong<br />
+    이메일: <a href="mailto:mok05289@korea.ac.kr">mok05289@korea.ac.kr</a></p>
+
+    <footer class="site">
+      <nav>
+        <a href="index.html">홈</a>
+        <a href="terms.html">이용약관</a>
+      </nav>
+      <div>© 2026 taebbong</div>
+    </footer>
+  </div>
+</body>
+</html>
