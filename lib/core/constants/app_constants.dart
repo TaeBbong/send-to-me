@@ -49,7 +49,7 @@ abstract final class AppConstants {
   static const String developerName = 'TaeBbong';
   static const String developerEmail = 'mok05289@korea.ac.kr';
   static const String repositoryUrl = 'https://github.com/TaeBbong/send-to-me';
-  static const String appVersion = '0.1.0';
+  static const String appVersion = '1.0.0';
 }
 
 /// SharedPreferences keys.
