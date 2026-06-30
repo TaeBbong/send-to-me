@@ -16,6 +16,7 @@ Both use the dev build's seeded sample data.
 |------|------|-----------|
 | `ios/6.9/` | 1320×2868 | **App Store — required** (6.9″, iPhone 16 Pro Max) |
 | `ios/6.5/` | 1242×2688 | App Store — 6.5″ fallback |
+| `ios/13/` | 2064×2752 | **App Store — required** (13″ iPad Display, iPad Pro 13″ M4) |
 | `android/phone/` | 1080×1920 | **Google Play** phone (9:16, within Play's 2:1 limit) |
 | `android/feature_graphic.png` | 1024×500 | Google Play feature graphic |
 | `raw/` | 1320×2868 | unframed iOS source captures |
@@ -42,11 +43,15 @@ Raw captures live in `raw/`. To re-frame after editing captions/colors:
 
 ```bash
 cd screenshots
-bash frame.sh           # iOS 6.9″  → ios/6.9/
+bash frame.sh           # iOS 6.9″  → ios/6.9/   (source: raw/)
+bash frame_ipad.sh      # iPad 13″  → ios/13/    (source: raw_ipad/)
 bash frame_android.sh   # Play phone + feature graphic
 # iOS 6.5″ is a resize of 6.9″:
 for f in ios/6.9/*.png; do magick "$f" -resize 1242x2688! "ios/6.5/$(basename "$f")"; done
 ```
+
+iPad raw captures (`raw_ipad/`, 2064×2752) come from the **iPad Pro 13-inch (M4)**
+simulator, driven through `lib/main_driver.dart` the same way as the phone set.
 
 To re-capture from the app, run it via the screenshot driver entrypoint
 (`lib/main_driver.dart`, which enables `flutter_driver`) and drive it with the
