@@ -29,6 +29,9 @@ dependencies:
   # Firebase AI Logic (Gemini)
   firebase_core: ^4.1.1
   firebase_ai: ^3.12.2
+  # Anti-abuse: attests calls so only genuine app installs can spend the
+  # project's Gemini quota (Play Integrity on Android, DeviceCheck on iOS).
+  firebase_app_check: ^0.4.0
 
   # Settings persistence
   shared_preferences: ^2.5.3
