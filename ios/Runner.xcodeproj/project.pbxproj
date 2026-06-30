@@ -14,12 +14,12 @@
 		453306538B0CADA6557A1F8D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB1672E23E0A277DF166675D /* GoogleService-Info.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
-		D0D0CAFE000000000000A001 /* QuickCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D0CAFE000000000000A002 /* QuickCapture.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		A1B2C3D40000000000000004 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000003 /* InfoPlist.strings */; };
 		C835A4755902EE328632CF75 /* Pods_ShareExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEA1F25201F98D505684750F /* Pods_ShareExtension.framework */; };
+		D0D0CAFE000000000000A001 /* QuickCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D0CAFE000000000000A002 /* QuickCapture.swift */; };
 		E80F96EC35CDF1EECEC97720 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C527DDF84A60027903615D1 /* Pods_RunnerTests.framework */; };
 		FC5794B92FE41C3E00E0DCF5 /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FC5794AF2FE41C3D00E0DCF5 /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -79,7 +79,6 @@
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		D0D0CAFE000000000000A002 /* QuickCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCapture.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7C527DDF84A60027903615D1 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C8F00F8754B022B4403EBA5 /* Pods-ShareExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShareExtension.release.xcconfig"; path = "Target Support Files/Pods-ShareExtension/Pods-ShareExtension.release.xcconfig"; sourceTree = "<group>"; };
@@ -95,6 +94,7 @@
 		ADA3963961C5EEED15683CAA /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		B32AE8E2EA6C6C0DFA8C98EB /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		B83C4D350E8AA40C49BC87A5 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		D0D0CAFE000000000000A002 /* QuickCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCapture.swift; sourceTree = "<group>"; };
 		DB1672E23E0A277DF166675D /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F4A3CAE031C4F17B2C14011D /* Pods-ShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShareExtension.debug.xcconfig"; path = "Target Support Files/Pods-ShareExtension/Pods-ShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		FC5794AF2FE41C3D00E0DCF5 /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -278,6 +278,7 @@
 				FC5794BA2FE41C3E00E0DCF5 /* Embed Foundation Extensions */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				6A1045EA64142C711BAA9421 /* [CP] Embed Pods Frameworks */,
+				9A352F980B879DF8FCEB8A7C /* Inject MinimumOSVersion into frameworks (App Store) */,
 			);
 			buildRules = (
 			);
@@ -500,6 +501,24 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
+		9A352F980B879DF8FCEB8A7C /* Inject MinimumOSVersion into frameworks (App Store) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Inject MinimumOSVersion into frameworks (App Store)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Flutter's generated App.framework Info.plist lacks MinimumOSVersion, which\n# App Store validation rejects. Inject it into any embedded framework missing\n# it (using the app's deployment target), then re-sign that framework so its\n# signature stays valid.\nset -e\nFRAMEWORK_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n[ -d \"$FRAMEWORK_DIR\" ] || exit 0\nfor FW in \"$FRAMEWORK_DIR\"/*.framework; do\n  PLIST=\"$FW/Info.plist\"\n  [ -f \"$PLIST\" ] || continue\n  if ! /usr/libexec/PlistBuddy -c \"Print :MinimumOSVersion\" \"$PLIST\" >/dev/null 2>&1; then\n    /usr/libexec/PlistBuddy -c \"Add :MinimumOSVersion string ${IPHONEOS_DEPLOYMENT_TARGET}\" \"$PLIST\"\n    echo \"note: injected MinimumOSVersion=${IPHONEOS_DEPLOYMENT_TARGET} into $(basename \"$FW\")\"\n    if [ \"${CODE_SIGNING_ALLOWED}\" = \"YES\" ] && [ -n \"${EXPANDED_CODE_SIGN_IDENTITY}\" ]; then\n      codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" \\\n        --preserve-metadata=identifier,entitlements,flags \"$FW\"\n    fi\n  fi\ndone\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -630,12 +649,15 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = DDNARWNFS2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "나에게 보내기";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -814,12 +836,15 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = DDNARWNFS2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "나에게 보내기";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -838,12 +863,15 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = DDNARWNFS2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "나에게 보내기";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
